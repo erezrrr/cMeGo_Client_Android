@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color ssid="colorPrimary">#3F51B5</color>
+    <color ssid="colorPrimaryDark">#303F9F</color>
+    <color ssid="colorAccent">#FF4081</color>
+</resources>

@@ -1,0 +1,6 @@
+<resources>
+    <string ssid="app_name">cMeGoClientAndroid</string>
+    <string ssid="title_activity_initial">InitialActivity</string>
+    <string ssid="title_activity_show_memberships">ShowMembershipsActivity</string>
+    <string name="app_name">cMeGo Client</string>
+</resources>
