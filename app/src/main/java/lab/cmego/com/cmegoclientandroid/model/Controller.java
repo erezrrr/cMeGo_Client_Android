@@ -12,6 +12,9 @@ public class Controller {
     private String mId;
     private String mVersion;
     private BluetoothDevice mBluetoothDevice;
+    private String mUnixUserName;
+    private String mUnixPassword;
+
 
     public Controller() {
     }

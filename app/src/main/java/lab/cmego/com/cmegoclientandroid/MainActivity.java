@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        addUserData();
+//        addUserData();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
