@@ -1,18 +1,21 @@
 package lab.cmego.com.cmegoclientandroid.network.server_facing;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.Map;
 
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Membership;
+import lab.cmego.com.cmegoclientandroid.model.User;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -28,8 +31,8 @@ public class NetworkClient {
     private TokenBasedApiInterface tokenAuthenticatedService;
 
     private NetworkClient(){
-        tokenAuthenticatedService = new ServiceGenerator().createService("https://fir-fun-b5410.firebaseio.com/", TokenBasedApiInterface.class);
-        cloudFunctionService = new ServiceGenerator().createService("https://us-central1-fir-fun-b5410.cloudfunctions.net/", CloudFunctionApiInterface.class);
+        tokenAuthenticatedService = new ServiceGenerator().createService("https://cmego-373dd.firebaseio.com/", TokenBasedApiInterface.class);
+        cloudFunctionService = new ServiceGenerator().createService("https://us-central1-cmego-373dd.cloudfunctions.net/", CloudFunctionApiInterface.class);
     }
 
     public static NetworkClient getInstance(){
@@ -69,6 +72,9 @@ public class NetworkClient {
     }
 
     public void getAllData(){
+
+
+
         Call<ResponseBody> call = cloudFunctionService.getAllData();
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
@@ -96,48 +102,68 @@ public class NetworkClient {
         });
     }
 
-    public void getAllMemberships(ResultListener<Map<String, Membership>> listener){
+    public void getAllMembershipsForProfile(final ResultListener<Map<String, Membership>> listener){
 
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String profileId = user.getUid();
 
-        mUser.getToken(true)
-                .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
-                    public void onComplete(@NonNull Task<GetTokenResult> task) {
-                        if (task.isSuccessful()) {
-                            String idToken = task.getResult().getToken();
+        Call<ResponseBody> call = cloudFunctionService.getMembershipsForProfileAllData(profileId);
+        call.enqueue(new RemoteServerCallback<ResponseBody>() {
+            @Override
+            protected void onServerResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    Log.d("kjhkjhkjh","kjhkjhkj: From Profile: " + response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-                            Call<Map<String, Membership>> call = tokenAuthenticatedService.getAllMemberships(idToken);
-                            call.enqueue(new RemoteServerCallback<Map<String, Membership>>() {
-                                @Override
-                                public void onServerResponse(Call<Map<String, Membership>> call,
-                                                             Response<Map<String, Membership>> response) {
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("","");
+            }
+        });
+    }
 
-                                    Log.d("","");
+    public void getAllMemberships(final ResultListener<Map<String, Membership>> listener){
 
-                                    //                                    Logger.log("Upload Success in " + (System.currentTimeMillis() - startTime) + " millies. Received in server: " + response.body().getData().getDescription());
-                                    //
-                                    //                                    if(listener != null){
-                                    //                                        listener.onComplete();
-                                    //                                    }
-                                }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String profileId = user.getUid();
 
-                                @Override
-                                public void onFailure(Call<Map<String, Membership>> call, Throwable t) {
-                                    //                                    Logger.log("Upload error: " + t.getMessage());
-                                    Log.d("","");
+        Query mUserReference = FirebaseDatabase.getInstance().getReference().child
+                ("users").orderByChild("profileId").equalTo(profileId);
 
-                                    //                                    if(listener != null){
-                                    //                                        listener.onError(new Exception(t == null ? "No message" : t.getMessage()));
-                                    //                                    }
-                                }
-                            });
+        mUserReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getChildren().iterator().next().getValue(User.class);
+                getMembershipsForUser(listener, user.getId());
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
-                        } else {
-                            // Handle error -> task.getException();
-                        }
-                    }
-                });
+            }
+        });
+    }
 
+    public void getMembershipsForUser(ResultListener<Map<String, Membership>> listener, String userId){
+
+        Call<ResponseBody> call = cloudFunctionService.getMembershipsForUserAllData(userId);
+        call.enqueue(new RemoteServerCallback<ResponseBody>() {
+            @Override
+            protected void onServerResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    Log.d("kjhkjhkjh","kjhkjhkj: " + response.body().string());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("","");
+            }
+        });
     }
 }

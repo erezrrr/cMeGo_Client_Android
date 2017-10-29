@@ -20,7 +20,7 @@ public interface TokenBasedApiInterface {
     @GET("/getAllData.json")
     Call<Map<String, Object>> getAllData(@Query("auth") String authToken);
 
-    //
+
     //    @GET("/recognizePic")
     //    Call<ResponseBody> recognizePic();
     //

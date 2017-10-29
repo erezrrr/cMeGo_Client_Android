@@ -16,8 +16,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import lab.cmego.com.cmegoclientandroid.create.CreateVehicleActivity;
+import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Account;
 import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
 import lab.cmego.com.cmegoclientandroid.model.Billing.CashPaymentMethod;
@@ -28,7 +30,6 @@ import lab.cmego.com.cmegoclientandroid.model.Client;
 import lab.cmego.com.cmegoclientandroid.model.Constants.UserAuthenticationMethod;
 import lab.cmego.com.cmegoclientandroid.model.Constants.VehicleAuthenticationMethod;
 import lab.cmego.com.cmegoclientandroid.model.Controller;
-import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.model.Location;
 import lab.cmego.com.cmegoclientandroid.model.Membership;
 import lab.cmego.com.cmegoclientandroid.model.Profile;
@@ -37,6 +38,7 @@ import lab.cmego.com.cmegoclientandroid.model.Vehicle.PlateIdentifier;
 import lab.cmego.com.cmegoclientandroid.model.Vehicle.Vehicle;
 import lab.cmego.com.cmegoclientandroid.model.Vehicle.VehicleIdentifier;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
+import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.network.server_facing.NetworkClient;
 
 public class MainActivity extends AppCompatActivity {
@@ -117,7 +119,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchAllMemberships() {
-        NetworkClient.getInstance().getAllData();
+
+        NetworkClient.getInstance().getAllMembershipsForProfile(new ResultListener<Map<String, Membership>>() {
+            @Override
+            public void onResult(Map<String, Membership> stringMembershipMap) {
+                Log.d("","");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d("","");
+            }
+        });
+
     }
 
     private void createVehicle() {
