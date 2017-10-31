@@ -1,6 +1,7 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
 import com.google.firebase.database.PropertyName;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Amit Ishai on 10/6/2017.
@@ -8,9 +9,11 @@ import com.google.firebase.database.PropertyName;
 
 public class User {
 
+    @SerializedName("id")
     @PropertyName("id")
     private String mId;
 
+    @SerializedName("profileId")
     @PropertyName("profileId")
     private String mProfileId;
 

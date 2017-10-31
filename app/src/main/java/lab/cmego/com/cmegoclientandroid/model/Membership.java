@@ -2,6 +2,7 @@ package lab.cmego.com.cmegoclientandroid.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,37 +20,48 @@ public class Membership {
 
     public enum Type { SYSTEM_ADMIN, MANAGER, TENANT, GUEST }
 
+    @SerializedName("id")
     @PropertyName("id")
     private String mId;
 
+    @SerializedName("type")
     @PropertyName("type")
     private Type mType;
 
+    @SerializedName("userId")
     @PropertyName("userId")
     private String mUserId;
 
+    @SerializedName("vehicleId")
     @PropertyName("vehicleId")
     private String mVehicleId;
 
+    @SerializedName("checkpointId")
     @PropertyName("checkpointId")
     private String mCheckpointId;
 
+    @SerializedName("accountId")
     @PropertyName("accountId")
     private String mAccountId;
 
+    @SerializedName("activationDate1")
     @PropertyName("activationDate")
     private Date mActivationDate;
 
+    @SerializedName("expirationDate1")
     @PropertyName("expirationDate")
     private Date mExpirationDate;
 
+    @SerializedName("internalAddress")
     @PropertyName("internalAddress")
     private String mInternalAddress; // What .apt?
 
     // Additional authentication methods decided upon by user
+    @SerializedName("userAuthenticationMethods")
     @PropertyName("userAuthenticationMethods")
     private List<UserAuthenticationMethod> mUserAuthenticationMethods = new ArrayList<>();
 
+    @SerializedName("vehicleAuthenticationMethods")
     @PropertyName("vehicleAuthenticationMethods")
     private List<VehicleAuthenticationMethod> mVehicleAuthenticationMethods = new ArrayList<>();
 

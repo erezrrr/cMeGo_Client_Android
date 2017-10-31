@@ -1,5 +1,7 @@
 package lab.cmego.com.cmegoclientandroid.model.gate;
 
+import com.google.gson.annotations.SerializedName;
+
 import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
 
 /**
@@ -8,10 +10,14 @@ import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
 
 public class Gate {
     public enum Type{SINGLE_DOOR, DOUBLE_DOOR}
+
+    @SerializedName("type")
     private Type mType;
 
+    @SerializedName("thumbnailUrl")
     private String mThumbnailUrl;
 
+    @SerializedName("bluetoothDevice")
     private BluetoothDevice mBluetoothDevice;
 
     public Gate() {

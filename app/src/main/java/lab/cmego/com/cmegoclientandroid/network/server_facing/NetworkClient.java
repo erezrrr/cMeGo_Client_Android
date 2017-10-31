@@ -102,7 +102,7 @@ public class NetworkClient {
         });
     }
 
-    public void getAllMembershipsForProfile(final ResultListener<Map<String, Membership>> listener){
+    public void getAllMembershipsForProfile(final ResultListener<String> listener){
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String profileId = user.getUid();
@@ -111,17 +111,39 @@ public class NetworkClient {
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
             protected void onServerResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
                 try {
-                    Log.d("kjhkjhkjh","kjhkjhkj: From Profile: " + response.body().string());
+
+                    String result = response.body().string();
+
+                    Log.d("kjhkjhkjh","kjhkjhkj: From Profile: " + result);
+
+                    if(listener != null){
+                        listener.onResult(result);
+                    }
+
                 } catch (IOException e) {
                     e.printStackTrace();
+                    reportError(e);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    reportError(e);
                 }
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("","");
+                reportError(t);
             }
+
+            private void reportError(Throwable t) {
+                if(listener != null){
+                    listener.onError(new Exception(t.getMessage()));
+                }
+            }
+
         });
     }
 

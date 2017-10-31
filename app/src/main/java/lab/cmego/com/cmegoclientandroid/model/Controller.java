@@ -1,6 +1,7 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Amit Ishai on 9/26/2017.
@@ -9,10 +10,15 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Controller {
 
+    @SerializedName("id")
     private String mId;
+    @SerializedName("version")
     private String mVersion;
+    @SerializedName("bluetoothDevice")
     private BluetoothDevice mBluetoothDevice;
+    @SerializedName("unixUserName")
     private String mUnixUserName;
+    @SerializedName("unixPassword")
     private String mUnixPassword;
 
 

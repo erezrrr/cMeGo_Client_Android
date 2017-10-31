@@ -16,10 +16,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
 
 import lab.cmego.com.cmegoclientandroid.create.CreateVehicleActivity;
-import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Account;
 import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
 import lab.cmego.com.cmegoclientandroid.model.Billing.CashPaymentMethod;
@@ -39,7 +37,7 @@ import lab.cmego.com.cmegoclientandroid.model.Vehicle.Vehicle;
 import lab.cmego.com.cmegoclientandroid.model.Vehicle.VehicleIdentifier;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
-import lab.cmego.com.cmegoclientandroid.network.server_facing.NetworkClient;
+import lab.cmego.com.cmegoclientandroid.service.MainService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startService(new Intent(this, MainService.class));
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -120,17 +120,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchAllMemberships() {
 
-        NetworkClient.getInstance().getAllMembershipsForProfile(new ResultListener<Map<String, Membership>>() {
-            @Override
-            public void onResult(Map<String, Membership> stringMembershipMap) {
-                Log.d("","");
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.d("","");
-            }
-        });
+//        NetworkClient.getInstance().getAllMembershipsForProfile(new ResultListener<Map<String, Membership>>() {
+//            @Override
+//            public void onResult(Map<String, Membership> stringMembershipMap) {
+//                Log.d("","");
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Log.d("","");
+//            }
+//        });
 
     }
 

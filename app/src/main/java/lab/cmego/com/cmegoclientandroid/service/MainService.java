@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import lab.cmego.com.cmegoclientandroid.MainActivity;
+import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.ble.BleProximityProvider;
 import lab.cmego.com.cmegoclientandroid.ble.BleScanAggregator;
@@ -34,8 +35,8 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 
         Notification notification = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("CMeGo Ble Scanning")
-                .setContentText("Scanning...")
+                .setContentTitle("CMeGo")
+                .setContentText("")
                 .setContentIntent(pendingIntent).build();
 
         startForeground(1337, notification);
@@ -49,6 +50,8 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 
         BleScanAggregator.getInstance().start();
         BleProximityProvider.getInstance().start();
+
+        Persistence.getSharedInstance().init(this);
 
         ScanLogger.getInstance().start();
 

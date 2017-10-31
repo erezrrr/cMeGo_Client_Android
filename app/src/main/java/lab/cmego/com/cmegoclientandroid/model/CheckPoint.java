@@ -1,5 +1,7 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,22 +16,31 @@ import lab.cmego.com.cmegoclientandroid.model.gate.policy.MultipleGatePolicy;
 
 public class CheckPoint {
 
+    @SerializedName("id")
     private String mId;
 
+    @SerializedName("controllerId")
     private String mControllerId;
+    @SerializedName("accountId")
     private String mAccountId;
 
+    @SerializedName("wifiNetworkId")
     private String mWifiNetworkId;
 
     // Physical gate description
+    @SerializedName("gates")
     private List<Gate> mGates;
 
+    @SerializedName("membershipIds")
     private ArrayList<String> mMembershipIds;
 
+    @SerializedName("gatePolicy")
     private MultipleGatePolicy mGatePolicy;
 
     // These are the base authentication methods decided upon by client.
+    @SerializedName("userAuthenticationMethods")
     private List<UserAuthenticationMethod> mUserAuthenticationMethods;
+    @SerializedName("vehicleAuthenticationMethods")
     private List<VehicleAuthenticationMethod> mVehicleAuthenticationMethods;
 
     public CheckPoint() {
