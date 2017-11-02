@@ -1,4 +1,4 @@
-package lab.cmego.com.cmegoclientandroid;
+package lab.cmego.com.cmegoclientandroid.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +19,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import lab.cmego.com.cmegoclientandroid.R;
 
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = SignUpActivity.class.getSimpleName();

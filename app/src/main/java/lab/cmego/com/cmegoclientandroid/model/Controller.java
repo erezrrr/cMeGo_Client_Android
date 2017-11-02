@@ -14,6 +14,7 @@ public class Controller {
     private BluetoothDevice mBluetoothDevice;
     private String mUnixUserName;
     private String mUnixPassword;
+    private String mBaseUrl;
 
     public Controller() {
     }
@@ -34,5 +35,13 @@ public class Controller {
 
     public BluetoothDevice getBluetoothDevice() {
         return mBluetoothDevice;
+    }
+
+    public String getBaseUrl() {
+        return mBaseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        mBaseUrl = baseUrl;
     }
 }

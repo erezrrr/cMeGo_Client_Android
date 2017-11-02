@@ -8,7 +8,10 @@ import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
-import lab.cmego.com.cmegoclientandroid.network.server_facing.NetworkClient;
+import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
+import lab.cmego.com.cmegoclientandroid.model.Controller;
+import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
+import lab.cmego.com.cmegoclientandroid.network.NetworkClient;
 import lab.cmego.com.cmegoclientandroid.serialization.CustomGson;
 
 /**
@@ -91,6 +94,68 @@ public class ContentProvider {
         mAllDataForUser = CustomGson.getInstance().fromJson(asJson, AllDataForUser.class);
 
         Log.d("","");
+    }
+
+    public Checkpoint getCheckpointForGate(Gate gate) {
+       return getCheckpointForGate(gate.getId());
+    }
+
+    public Checkpoint getCheckpointForGate(String gateId) {
+        if(mAllDataForUser == null){
+            return null;
+        }
+
+        for(Checkpoint checkpoint : mAllDataForUser.getCheckpoints()){
+
+            for(String tmpGateId : checkpoint.getGateIds()){
+                if(gateId.equals(tmpGateId)){
+                    return checkpoint;
+                }
+            }
+
+        }
+
+        return null;
+    }
+
+    public List<Gate> getGates() {
+        if(mAllDataForUser == null || mAllDataForUser.getGates() == null){
+            return new ArrayList<>();
+        }
+
+        return mAllDataForUser.getGates();
+    }
+
+    public Gate getGateById(String gateId) {
+        if(mAllDataForUser == null || mAllDataForUser.getGates() == null){
+            return null;
+        }
+
+        for(Gate gate : mAllDataForUser.getGates()){
+            if(gate.getId().equals(gateId)){
+                return gate;
+            }
+        }
+
+        return null;
+    }
+
+    public Controller getControllerForGate(String gateId) {
+        if(mAllDataForUser == null){
+            return null;
+        }
+
+        Checkpoint checkpoint = getCheckpointForGate(gateId);
+
+        for(Controller controller : mAllDataForUser.getControllers()){
+
+            if(checkpoint.getControllerId().equals(controller.getId())){
+                return controller;
+            }
+
+        }
+
+        return null;
     }
 
     public interface ContentProviderInterface {

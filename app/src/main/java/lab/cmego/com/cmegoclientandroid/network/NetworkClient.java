@@ -1,4 +1,4 @@
-package lab.cmego.com.cmegoclientandroid.network.server_facing;
+package lab.cmego.com.cmegoclientandroid.network;
 
 import android.util.Log;
 
@@ -16,6 +16,10 @@ import java.util.Map;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Membership;
 import lab.cmego.com.cmegoclientandroid.model.User;
+import lab.cmego.com.cmegoclientandroid.network.controller_facing.ControllerApiInterface;
+import lab.cmego.com.cmegoclientandroid.network.server_facing.CloudFunctionApiInterface;
+import lab.cmego.com.cmegoclientandroid.network.server_facing.RemoteServerCallback;
+import lab.cmego.com.cmegoclientandroid.network.server_facing.TokenBasedApiInterface;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -27,12 +31,17 @@ import retrofit2.Response;
 public class NetworkClient {
 
     private static NetworkClient sInstance;
-    private final CloudFunctionApiInterface cloudFunctionService;
-    private TokenBasedApiInterface tokenAuthenticatedService;
+    private CloudFunctionApiInterface mCloudFunctionService;
+    private TokenBasedApiInterface mTokenAuthenticatedService;
+    private ControllerApiInterface mControllerApiInterface;
 
     private NetworkClient(){
-        tokenAuthenticatedService = new ServiceGenerator().createService("https://cmego-373dd.firebaseio.com/", TokenBasedApiInterface.class);
-        cloudFunctionService = new ServiceGenerator().createService("https://us-central1-cmego-373dd.cloudfunctions.net/", CloudFunctionApiInterface.class);
+        mTokenAuthenticatedService = new ServiceGenerator().createService("https://cmego-373dd.firebaseio.com/", TokenBasedApiInterface.class);
+        mCloudFunctionService = new ServiceGenerator().createService("https://us-central1-cmego-373dd.cloudfunctions.net/", CloudFunctionApiInterface.class);
+    }
+
+    public void initControllerInterface(String baseUrl){
+        mControllerApiInterface = new ServiceGenerator().createService(baseUrl, ControllerApiInterface.class);
     }
 
     public static NetworkClient getInstance(){
@@ -43,8 +52,8 @@ public class NetworkClient {
         return sInstance;
     }
 
-    public void helloWorld(){
-        Call<ResponseBody> call = cloudFunctionService.helloWorld();
+    public void helloWorld(final ResultListener<String> listener){
+        Call<ResponseBody> call = mControllerApiInterface.helloWorld();
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
             public void onServerResponse(Call<ResponseBody> call,
@@ -52,6 +61,13 @@ public class NetworkClient {
 
                 Log.d("","");
 
+                if(listener != null){
+                    try {
+                        listener.onResult(response.body().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
                 //                                    Logger.log("Upload Success in " + (System.currentTimeMillis() - startTime) + " millies. Received in server: " + response.body().getData().getDescription());
                 //
                 //                                    if(listener != null){
@@ -64,6 +80,9 @@ public class NetworkClient {
                 //                                    Logger.log("Upload error: " + t.getMessage());
                 Log.d("","");
 
+                if(listener != null){
+                    listener.onError(new Exception(t.getMessage()));
+                }
                 //                                    if(listener != null){
                 //                                        listener.onError(new Exception(t == null ? "No message" : t.getMessage()));
                 //                                    }
@@ -75,7 +94,7 @@ public class NetworkClient {
 
 
 
-        Call<ResponseBody> call = cloudFunctionService.getAllData();
+        Call<ResponseBody> call = mCloudFunctionService.getAllData();
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
             public void onServerResponse(Call<ResponseBody> call,
@@ -107,7 +126,7 @@ public class NetworkClient {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String profileId = user.getUid();
 
-        Call<ResponseBody> call = cloudFunctionService.getMembershipsForProfileAllData(profileId);
+        Call<ResponseBody> call = mCloudFunctionService.getMembershipsForProfileAllData(profileId);
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
             protected void onServerResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -171,7 +190,7 @@ public class NetworkClient {
 
     public void getMembershipsForUser(ResultListener<Map<String, Membership>> listener, String userId){
 
-        Call<ResponseBody> call = cloudFunctionService.getMembershipsForUserAllData(userId);
+        Call<ResponseBody> call = mCloudFunctionService.getMembershipsForUserAllData(userId);
         call.enqueue(new RemoteServerCallback<ResponseBody>() {
             @Override
             protected void onServerResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

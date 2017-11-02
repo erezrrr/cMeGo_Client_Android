@@ -9,7 +9,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
-import lab.cmego.com.cmegoclientandroid.MainActivity;
+import lab.cmego.com.cmegoclientandroid.activities.MainActivity;
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.ble.BleProximityProvider;

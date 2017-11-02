@@ -1,9 +1,11 @@
-package lab.cmego.com.cmegoclientandroid;
+package lab.cmego.com.cmegoclientandroid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Date;
 
+import lab.cmego.com.cmegoclientandroid.R;
+import lab.cmego.com.cmegoclientandroid.adapters.GatesRecyclerViewAdapter;
+import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.create.CreateVehicleActivity;
 import lab.cmego.com.cmegoclientandroid.model.Account;
 import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
@@ -39,7 +44,7 @@ import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.service.MainService;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ContentProvider.ContentProviderInterface {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
@@ -48,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mUserDetails;
     private Button mShowAllMembershipsButton;
     private Button mShowMyMembershipsButton;
+    private GatesRecyclerViewAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        //        fetchAllMemberships();
+        ContentProvider.getInstance().addListener(this);
+        setupRecyclerView();
 
         mSignOutButton = (Button)findViewById(R.id.signOutButton);
         mUserDetails = (TextView)findViewById(R.id.userDetails);
@@ -116,6 +123,33 @@ public class MainActivity extends AppCompatActivity {
                 // ...
             }
         };
+    }
+
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.gatesRV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAdapter = new GatesRecyclerViewAdapter(this, new ArrayList<Gate>());
+
+        mAdapter.setClickListener(new GatesRecyclerViewAdapter.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                 Gate gate = mAdapter.getItem(position);
+
+                Intent intent = new Intent(MainActivity.this, GateActivity.class)
+                        .putExtra(GateActivity.EXTRA_GATE_ID, gate.getId());
+
+                startActivity(intent);
+            }
+        });
+
+        recyclerView.setAdapter(mAdapter);
+
+        setAdapterWithGates();
+    }
+
+    private void setAdapterWithGates() {
+        ArrayList<Gate> gates = (ArrayList<Gate>) ContentProvider.getInstance().getGates();
+        mAdapter.setData(gates);
     }
 
     private void fetchAllMemberships() {
@@ -314,5 +348,10 @@ public class MainActivity extends AppCompatActivity {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onContentRefreshed() {
+        setAdapterWithGates();
     }
 }

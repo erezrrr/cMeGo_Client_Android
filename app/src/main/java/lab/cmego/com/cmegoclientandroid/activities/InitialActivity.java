@@ -1,10 +1,12 @@
-package lab.cmego.com.cmegoclientandroid;
+package lab.cmego.com.cmegoclientandroid.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import lab.cmego.com.cmegoclientandroid.R;
 
 public class InitialActivity extends AppCompatActivity {
 

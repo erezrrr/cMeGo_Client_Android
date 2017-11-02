@@ -1,4 +1,4 @@
-package lab.cmego.com.cmegoclientandroid.network.server_facing;
+package lab.cmego.com.cmegoclientandroid.network;
 
 import java.util.concurrent.TimeUnit;
 

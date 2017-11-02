@@ -47,4 +47,8 @@ public class AllDataForUser {
     public List<WifiNetwork> getWifiNetworks() {
         return mWifiNetworks;
     }
+
+    public List<Gate> getGates() {
+        return mGates;
+    }
 }

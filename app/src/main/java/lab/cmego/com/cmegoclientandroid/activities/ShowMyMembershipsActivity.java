@@ -1,4 +1,4 @@
-package lab.cmego.com.cmegoclientandroid;
+package lab.cmego.com.cmegoclientandroid.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.adapters.MembershipsRecyclerViewAdapter;
 import lab.cmego.com.cmegoclientandroid.model.Membership;
 import lab.cmego.com.cmegoclientandroid.model.User;

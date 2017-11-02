@@ -7,18 +7,13 @@ import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
  */
 
 public class Gate {
+
     public enum Type{SINGLE_DOOR, DOUBLE_DOOR, SINGLE_ARM, SLIDING}
-
     private String mId;
-
     private Type mType;
-
     private String mThumbnailUrl;
-
     private BluetoothDevice mBluetoothDevice;
-
     private String mName;
-
 
     public Gate() {
     }
