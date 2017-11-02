@@ -23,7 +23,7 @@ import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
 import lab.cmego.com.cmegoclientandroid.model.Billing.CashPaymentMethod;
 import lab.cmego.com.cmegoclientandroid.model.Billing.PaymentMethod;
 import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
-import lab.cmego.com.cmegoclientandroid.model.CheckPoint;
+import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
 import lab.cmego.com.cmegoclientandroid.model.Client;
 import lab.cmego.com.cmegoclientandroid.model.Constants.UserAuthenticationMethod;
 import lab.cmego.com.cmegoclientandroid.model.Constants.VehicleAuthenticationMethod;
@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
         String membId = mDatabase.child("memberships").push().getKey();
 
         Membership membership = new Membership()
-                .setActivationDate(new Date(System.currentTimeMillis()))
-                .setExpirationDate(new Date(System.currentTimeMillis()))
+                .setActivationDate(System.currentTimeMillis())
+                .setExpirationDate(System.currentTimeMillis() + 2000000)
                 .setInternalAddress("Apt 2")
                 .setUserId(userId)
                 .setVehicleId(vehicleId)
@@ -219,28 +219,46 @@ public class MainActivity extends AppCompatActivity {
 
         BluetoothDevice bluetoothDevice = new BluetoothDevice("AE:23:97:0C:39:B1", "BuddyBeacon#2");
 
-        String wifiNetworkId = mDatabase.child("wifi_networks").push().getKey();
+        String wifiNetworkId = mDatabase.child("wifiNetworks").push().getKey();
 
-        WifiNetwork wifiNetwork = new WifiNetwork(wifiNetworkId, "73:5E:20:F2:68:01", "Great Wifi", "secretPassword!");
+        WifiNetwork wifiNetwork = new WifiNetwork(wifiNetworkId, "73:5E:20:F2:68:01", "zorichukiz", "nuritnuritnurit");
 
         String controllerId = mDatabase.child("controllers").push().getKey();
 
         Controller controller = new Controller(controllerId, "0.0.1", bluetoothDevice);
 
         mDatabase.child("controllers").child(controllerId).setValue(controller);
-        mDatabase.child("wifi_networks").child(wifiNetworkId).setValue(wifiNetwork);
+        mDatabase.child("wifiNetworks").child(wifiNetworkId).setValue(wifiNetwork);
 
 
-        Gate gate = new Gate(Gate.Type.DOUBLE_DOOR);
-        gate.setThumbnailUrl("http://cornucopia3d.e-oncontent.com/storeItems/Objects/Exterior/Fencing/Mansion_Gate_Kit_3_0_img.jpg?mod=1");
+        ArrayList<String> gates = new ArrayList<>();
 
-        ArrayList<Gate> gates = new ArrayList<>();
-        gates.add(gate);
+        String gateId1 = mDatabase.child("gates").push().getKey();
+        Gate gate1 = new Gate(Gate.Type.DOUBLE_DOOR);
+        gate1.setThumbnailUrl("http://cornucopia3d.e-oncontent.com/storeItems/Objects/Exterior/Fencing/Mansion_Gate_Kit_3_0_img.jpg?mod=1");
+        gate1.setId(gateId1);
+        gate1.setName("Internal Gate");
+        gate1.setBluetoothDevice(bluetoothDevice);
 
-        CheckPoint checkPoint = new CheckPoint(checkpointId, accId, controllerId,
+        gates.add(gateId1);
+
+        String gateId2 = mDatabase.child("gates").push().getKey();
+        Gate gate2 = new Gate(Gate.Type.SINGLE_ARM);
+        gate2.setThumbnailUrl("https://www.google.co.il/search?q=parking+lot+entrance+gate&rlz=1C1LENP_enIL758IL758&source=lnms&tbm=isch&sa=X&ved=0ahUKEwi5mZbZ45_XAhUHoaQKHaYPAhcQ_AUICigB&biw=1366&bih=662#imgrc=8iyjKzg8V6g_kM:");
+        gate2.setId(gateId2);
+        gate2.setName("External Gate");
+
+        gates.add(gateId2);
+
+        mDatabase.child("gates").child(gateId1).setValue(gate1);
+        mDatabase.child("gates").child(gateId2).setValue(gate2);
+
+        Checkpoint checkpoint = new Checkpoint(checkpointId, accId, controllerId,
                 wifiNetworkId, gates, memberShipIds, userAuthenticationMethods, vehicleAuthenticationMethods);
 
-        mDatabase.child("checkpoints").child(checkpointId).setValue(checkPoint);
+        checkpoint.setName("North Entrance");
+
+        mDatabase.child("checkpoints").child(checkpointId).setValue(checkpoint);
 
         PaymentMethod paymentMethod = new CashPaymentMethod();
         BillingDetails billingDetails = new BillingDetails(paymentMethod, 50000, BillingDetails
@@ -250,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         checkpointIds.add(checkpointId);
 
         Account account = new Account(accId, locId, clientId, Account.Type.RESIDENTIAL
-                , new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), checkpointIds, billingDetails);
+                , System.currentTimeMillis(), System.currentTimeMillis() + 3500000, checkpointIds, billingDetails);
 
         mDatabase.child("accounts").child(accId).setValue(account);
 

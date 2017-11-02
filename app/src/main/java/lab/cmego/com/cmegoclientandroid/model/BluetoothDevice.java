@@ -1,7 +1,5 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Amit Ishai on 10/6/2017.
  */
@@ -9,9 +7,7 @@ import com.google.gson.annotations.SerializedName;
 // One per controller
 public class BluetoothDevice {
 
-    @SerializedName("macAddress")
     private String mMacAddress;
-    @SerializedName("name")
     private String mName;
 
     public BluetoothDevice() {

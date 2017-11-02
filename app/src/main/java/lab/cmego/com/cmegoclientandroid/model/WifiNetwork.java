@@ -1,7 +1,5 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Created by Amit Ishai on 10/6/2017.
  */
@@ -9,13 +7,9 @@ import com.google.gson.annotations.SerializedName;
 // May be used across multiple accounts/checkpoints
 public class WifiNetwork {
 
-    @SerializedName("id")
     private String mId;
-    @SerializedName("bssid")
     private String mBssid;
-    @SerializedName("ssid")
     private String mSsid;
-    @SerializedName("password")
     private String mPassword;
 
     public WifiNetwork(String id, String bssid, String ssid, String password) {

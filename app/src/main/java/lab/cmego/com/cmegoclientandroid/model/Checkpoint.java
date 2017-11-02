@@ -1,52 +1,42 @@
 package lab.cmego.com.cmegoclientandroid.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.model.Constants.UserAuthenticationMethod;
 import lab.cmego.com.cmegoclientandroid.model.Constants.VehicleAuthenticationMethod;
-import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.model.gate.policy.MultipleGatePolicy;
 
 /**
  * Created by Amit Ishai on 10/6/2017.
  */
 
-public class CheckPoint {
+public class Checkpoint {
 
-    @SerializedName("id")
     private String mId;
 
-    @SerializedName("controllerId")
+    private String mName;
+
     private String mControllerId;
-    @SerializedName("accountId")
     private String mAccountId;
 
-    @SerializedName("wifiNetworkId")
     private String mWifiNetworkId;
 
     // Physical gate description
-    @SerializedName("gates")
-    private List<Gate> mGates;
+    private List<String> mGateIds;
 
-    @SerializedName("membershipIds")
     private ArrayList<String> mMembershipIds;
 
-    @SerializedName("gatePolicy")
     private MultipleGatePolicy mGatePolicy;
 
     // These are the base authentication methods decided upon by client.
-    @SerializedName("userAuthenticationMethods")
     private List<UserAuthenticationMethod> mUserAuthenticationMethods;
-    @SerializedName("vehicleAuthenticationMethods")
     private List<VehicleAuthenticationMethod> mVehicleAuthenticationMethods;
 
-    public CheckPoint() {
+    public Checkpoint() {
     }
 
-    public CheckPoint(String id, String accountId, String controllerId, String wifiNetworkId, List <Gate> gates,
+    public Checkpoint(String id, String accountId, String controllerId, String wifiNetworkId, List <String> gateIds,
                       ArrayList<String> membershipIds, List<UserAuthenticationMethod>
                               userAuthenticationMethods, List<VehicleAuthenticationMethod>
                               vehicleAuthenticationMethods) {
@@ -54,7 +44,7 @@ public class CheckPoint {
         mAccountId = accountId;
         mControllerId = controllerId;
         mWifiNetworkId = wifiNetworkId;
-        mGates = gates;
+        mGateIds = gateIds;
         mMembershipIds = membershipIds;
         mUserAuthenticationMethods = userAuthenticationMethods;
         mVehicleAuthenticationMethods = vehicleAuthenticationMethods;
@@ -78,10 +68,6 @@ public class CheckPoint {
 
     public void setWifiNetworkId(String wifiNetworkId) {
         mWifiNetworkId = wifiNetworkId;
-    }
-
-    public void setGates(List<Gate> gates) {
-        mGates = gates;
     }
 
     public void setMembershipIds(ArrayList<String> membershipIds) {
@@ -117,10 +103,6 @@ public class CheckPoint {
         return mWifiNetworkId;
     }
 
-    public List<Gate> getGates() {
-        return mGates;
-    }
-
     public ArrayList<String> getMembershipIds() {
         return mMembershipIds;
     }
@@ -131,5 +113,21 @@ public class CheckPoint {
 
     public void setGatePolicy(MultipleGatePolicy gatePolicy) {
         mGatePolicy = gatePolicy;
+    }
+
+    public List<String> getGateIds() {
+        return mGateIds;
+    }
+
+    public void setGateIds(List<String> gateIds) {
+        mGateIds = gateIds;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void setName(String name) {
+        mName = name;
     }
 }

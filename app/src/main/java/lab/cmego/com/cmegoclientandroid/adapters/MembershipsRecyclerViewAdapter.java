@@ -56,8 +56,8 @@ public class MembershipsRecyclerViewAdapter extends RecyclerView.Adapter<Members
         holder.vehicleIdTV.setText("Vehicle Id: " + membership.getVehicleId());
         holder.checkPointIdTV.setText("Checkpoint Id: " + membership.getCheckpointId());
         holder.accountIdTV.setText("Account Id: " + membership.getAccountId());
-        holder.activationDateTV.setText("Activation Date: " + membership.getActivationDate().toString());
-        holder.expirationDateTV.setText("Expiration Date: " + membership.getExpirationDate().toString());
+        holder.activationDateTV.setText("Activation Date: " + membership.getActivationDate());
+        holder.expirationDateTV.setText("Expiration Date: " + membership.getExpirationDate());
         holder.internalAddressTV.setText("Internal Address: " + membership.getInternalAddress());
         holder.userAuthMethodsTV.setText("User Auth Methods: " + (membership.getUserAuthenticationMethods() == null ? "NONE" : "" + membership.getUserAuthenticationMethods().size()));
         holder.vehicleAuthMethodsTV.setText("Vehicle Auth Methods: " + (membership.getVehicleAuthenticationMethods() == null ? "NONE" : "" + membership.getVehicleAuthenticationMethods().size()));

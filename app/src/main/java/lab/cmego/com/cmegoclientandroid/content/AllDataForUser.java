@@ -1,14 +1,13 @@
 package lab.cmego.com.cmegoclientandroid.content;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
-import lab.cmego.com.cmegoclientandroid.model.CheckPoint;
+import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
 import lab.cmego.com.cmegoclientandroid.model.Controller;
 import lab.cmego.com.cmegoclientandroid.model.Membership;
 import lab.cmego.com.cmegoclientandroid.model.User;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
+import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 
 /**
  * Created by Owner on 31/10/2017.
@@ -16,19 +15,17 @@ import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 
 public class AllDataForUser {
 
-    @SerializedName("user")
     private User mUser;
 
-    @SerializedName("memberships")
     private List<Membership> mMemberships;
 
-    @SerializedName("controllers")
     private List<Controller> mControllers;
 
-    @SerializedName("checkpoints")
-    private List<CheckPoint> mCheckPoints;
+    private List<Checkpoint> mCheckpoints;
 
-    @SerializedName("wifi_networks")
+    private List<Gate> mGates;
+
+
     private List<WifiNetwork> mWifiNetworks;
 
     public User getUser() {
@@ -43,8 +40,8 @@ public class AllDataForUser {
         return mControllers;
     }
 
-    public List<CheckPoint> getCheckPoints() {
-        return mCheckPoints;
+    public List<Checkpoint> getCheckpoints() {
+        return mCheckpoints;
     }
 
     public List<WifiNetwork> getWifiNetworks() {

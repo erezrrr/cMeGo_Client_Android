@@ -3,8 +3,6 @@ package lab.cmego.com.cmegoclientandroid;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +21,6 @@ public class Persistence {
 
     private static Persistence sSharedInstance;
     private Context mContext;
-    private Gson mGson = new Gson();
 
     public static Persistence getSharedInstance(){
         if(sSharedInstance == null){

@@ -3,14 +3,13 @@ package lab.cmego.com.cmegoclientandroid.content;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.network.server_facing.NetworkClient;
+import lab.cmego.com.cmegoclientandroid.serialization.CustomGson;
 
 /**
  * Created by Owner on 29/10/2017.
@@ -49,6 +48,7 @@ public class ContentProvider {
 
     public void init(){
         loadDataFromCache();
+        notifyContentLoaded();
         refreshData();
     }
 
@@ -65,7 +65,7 @@ public class ContentProvider {
                 Persistence.getSharedInstance().setAllData(result);
                 loadDataFromCache();
 
-                notifyContentRefreshed();
+                notifyContentLoaded();
             }
 
             @Override
@@ -75,7 +75,7 @@ public class ContentProvider {
         });
     }
 
-    private void notifyContentRefreshed() {
+    private void notifyContentLoaded() {
         for(ContentProviderInterface listener : mListeners){
             listener.onContentRefreshed();
         }
@@ -88,7 +88,7 @@ public class ContentProvider {
             return;
         }
 
-        mAllDataForUser = new Gson().fromJson(asJson, AllDataForUser.class);
+        mAllDataForUser = CustomGson.getInstance().fromJson(asJson, AllDataForUser.class);
 
         Log.d("","");
     }

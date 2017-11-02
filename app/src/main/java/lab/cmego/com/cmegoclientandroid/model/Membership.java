@@ -2,10 +2,8 @@ package lab.cmego.com.cmegoclientandroid.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.model.Constants.UserAuthenticationMethod;
@@ -20,48 +18,37 @@ public class Membership {
 
     public enum Type { SYSTEM_ADMIN, MANAGER, TENANT, GUEST }
 
-    @SerializedName("id")
     @PropertyName("id")
     private String mId;
 
-    @SerializedName("type")
     @PropertyName("type")
     private Type mType;
 
-    @SerializedName("userId")
     @PropertyName("userId")
     private String mUserId;
 
-    @SerializedName("vehicleId")
     @PropertyName("vehicleId")
     private String mVehicleId;
 
-    @SerializedName("checkpointId")
     @PropertyName("checkpointId")
     private String mCheckpointId;
 
-    @SerializedName("accountId")
     @PropertyName("accountId")
     private String mAccountId;
 
-    @SerializedName("activationDate1")
     @PropertyName("activationDate")
-    private Date mActivationDate;
+    private long mActivationDate;
 
-    @SerializedName("expirationDate1")
     @PropertyName("expirationDate")
-    private Date mExpirationDate;
+    private long mExpirationDate;
 
-    @SerializedName("internalAddress")
     @PropertyName("internalAddress")
     private String mInternalAddress; // What .apt?
 
     // Additional authentication methods decided upon by user
-    @SerializedName("userAuthenticationMethods")
     @PropertyName("userAuthenticationMethods")
     private List<UserAuthenticationMethod> mUserAuthenticationMethods = new ArrayList<>();
 
-    @SerializedName("vehicleAuthenticationMethods")
     @PropertyName("vehicleAuthenticationMethods")
     private List<VehicleAuthenticationMethod> mVehicleAuthenticationMethods = new ArrayList<>();
 
@@ -106,11 +93,11 @@ public class Membership {
         return this;
     }
 
-    public Date getActivationDate() {
+    public long getActivationDate() {
         return mActivationDate;
     }
 
-    public Membership setActivationDate(Date activationDate) {
+    public Membership setActivationDate(long activationDate) {
         mActivationDate = activationDate;
         return this;
     }
@@ -125,11 +112,11 @@ public class Membership {
         return this;
     }
 
-    public Date getExpirationDate() {
+    public long getExpirationDate() {
         return mExpirationDate;
     }
 
-    public Membership setExpirationDate(Date expirationDate) {
+    public Membership setExpirationDate(long expirationDate) {
         mExpirationDate = expirationDate;
         return this;
     }

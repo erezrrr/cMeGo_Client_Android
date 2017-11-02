@@ -3,7 +3,6 @@ package lab.cmego.com.cmegoclientandroid.model;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
 
@@ -25,8 +24,8 @@ public class Account {
 
     private Type mType;
 
-    private Date mActivationDate;
-    private Date mExpirationDate;
+    private long mActivationDate;
+    private long mExpirationDate;
 
     private ArrayList<String> mCheckpointIds;
 
@@ -35,7 +34,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(String id, String locationId, String clientId, Type type, Date activationDate, Date
+    public Account(String id, String locationId, String clientId, Type type, long activationDate, long
             expirationDate, ArrayList<String> checkpointIds, BillingDetails billingDetails) {
         mId = id;
         mLocationId = locationId;
@@ -63,11 +62,11 @@ public class Account {
         return mType;
     }
 
-    public Date getActivationDate() {
+    public long getActivationDate() {
         return mActivationDate;
     }
 
-    public Date getExpirationDate() {
+    public long getExpirationDate() {
         return mExpirationDate;
     }
 
