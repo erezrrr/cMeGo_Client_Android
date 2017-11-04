@@ -12,7 +12,7 @@ public class GateState {
 
     private String mUserId;
 
-    private UserAuthenticationMethod mNextUserAuthenticationMethod;
+    private UserAuthenticationMethod mNextUserAuthMethod;
 
     private boolean mIsMembershipActive;
 
@@ -37,12 +37,12 @@ public class GateState {
         mUserId = userId;
     }
 
-    public UserAuthenticationMethod getNextUserAuthenticationMethod() {
-        return mNextUserAuthenticationMethod;
+    public UserAuthenticationMethod getNextUserAuthMethod() {
+        return mNextUserAuthMethod;
     }
 
-    public void setNextUserAuthenticationMethod(UserAuthenticationMethod nextUserAuthenticationMethod) {
-        mNextUserAuthenticationMethod = nextUserAuthenticationMethod;
+    public void setNextUserAuthMethod(UserAuthenticationMethod nextUserAuthMethod) {
+        mNextUserAuthMethod = nextUserAuthMethod;
     }
 
     public boolean isMembershipActive() {

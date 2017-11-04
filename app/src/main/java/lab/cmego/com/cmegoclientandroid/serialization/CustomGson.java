@@ -28,8 +28,9 @@ public class CustomGson {
             }
         };
 
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingStrategy(customPolicy);
+        GsonBuilder gsonBuilder = new GsonBuilder()
+                .setFieldNamingStrategy(customPolicy)
+                .setLenient();
         mGson = gsonBuilder.create();
     }
 

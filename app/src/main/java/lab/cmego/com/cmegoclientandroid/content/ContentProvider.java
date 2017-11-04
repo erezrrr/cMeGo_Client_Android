@@ -10,6 +10,7 @@ import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
 import lab.cmego.com.cmegoclientandroid.model.Controller;
+import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.network.NetworkClient;
 import lab.cmego.com.cmegoclientandroid.serialization.CustomGson;
@@ -97,7 +98,7 @@ public class ContentProvider {
     }
 
     public Checkpoint getCheckpointForGate(Gate gate) {
-       return getCheckpointForGate(gate.getId());
+        return getCheckpointForGate(gate.getId());
     }
 
     public Checkpoint getCheckpointForGate(String gateId) {
@@ -151,6 +152,32 @@ public class ContentProvider {
 
             if(checkpoint.getControllerId().equals(controller.getId())){
                 return controller;
+            }
+
+        }
+
+        return null;
+    }
+
+    public String getUserId() {
+        if(mAllDataForUser == null || mAllDataForUser.getUser() == null){
+            return null;
+        }
+
+        return mAllDataForUser.getUser().getId();
+    }
+
+    public WifiNetwork getWifiNetworkForGate(String gateId) {
+        if(mAllDataForUser == null){
+            return null;
+        }
+
+        Checkpoint checkpoint = getCheckpointForGate(gateId);
+
+        for(WifiNetwork wifiNetwork : mAllDataForUser.getWifiNetworks()){
+
+            if(checkpoint.getWifiNetworkId().equals(wifiNetwork.getId())){
+                return wifiNetwork;
             }
 
         }

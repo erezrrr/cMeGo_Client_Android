@@ -9,14 +9,16 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
-import lab.cmego.com.cmegoclientandroid.activities.MainActivity;
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.R;
+import lab.cmego.com.cmegoclientandroid.activities.InitialActivity;
 import lab.cmego.com.cmegoclientandroid.ble.BleProximityProvider;
 import lab.cmego.com.cmegoclientandroid.ble.BleScanAggregator;
 import lab.cmego.com.cmegoclientandroid.ble.BleScanner;
+import lab.cmego.com.cmegoclientandroid.connections.ConnectionManager;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.log.ScanLogger;
+import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
 
 /**
  * Created by Amit Ishai on 9/24/2017.
@@ -28,7 +30,7 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
     public void onCreate() {
         super.onCreate();
 
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        Intent notificationIntent = new Intent(this, InitialActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
@@ -44,6 +46,10 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        ConnectionManager.getSharedInstance().init(this);
+        ProximityStateMachine.getInstance().init();
+
         BleScanner.getInstance().addListener(this);
         BleScanner.getInstance().init(this);
         BleScanner.getInstance().startScanning();
@@ -63,6 +69,7 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        ConnectionManager.getSharedInstance().destroy();
         BleScanner.getInstance().removeListener(this);
         BleScanner.getInstance().stopScanning();
         ScanLogger.getInstance().stop();

@@ -1,6 +1,8 @@
 package lab.cmego.com.cmegoclientandroid.network.controller_facing;
 
 
+import lab.cmego.com.cmegoclientandroid.authentication.AuthenticationResult;
+import lab.cmego.com.cmegoclientandroid.model.GateState;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,19 +18,13 @@ public interface ControllerApiInterface {
     Call<ResponseBody> helloWorld();
 
     @GET("/checkIn")
-    Call<ResponseBody> getMembershipsForUserAllData(@Query("userId") String userId);
+    Call<GateState> checkIn(@Query("gateId") String gateId, @Query("userId") String userId);
 
-    @GET("/getMembershipsForUserAllDataFake")
-    Call<ResponseBody> getMembershipsForUserAllDataFake(@Query("userId") String userId);
-
-    @GET("/getMembershipsForProfileAllData")
-    Call<ResponseBody> getMembershipsForProfileAllData(@Query("profileId") String profileId);
-
-    //
-    //    @GET("/recognizePic")
-    //    Call<ResponseBody> recognizePic();
-    //
-    //    @POST("/recognizePic")
-    //    Call<ResponseBody> recognizePic2(@Body RequestBody photo);
+    @GET("/authenticatePlain")
+    Call<AuthenticationResult> authenticatePlain(
+            @Query("gateId") String gateId,
+            @Query("userId") String userId,
+            @Query("method") String method,
+            @Query("value") String value);
 
 }

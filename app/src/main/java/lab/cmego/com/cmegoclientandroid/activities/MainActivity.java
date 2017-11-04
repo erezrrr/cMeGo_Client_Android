@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
             public void onItemClick(View view, int position) {
                  Gate gate = mAdapter.getItem(position);
 
+
                 Intent intent = new Intent(MainActivity.this, GateActivity.class)
                         .putExtra(GateActivity.EXTRA_GATE_ID, gate.getId());
 

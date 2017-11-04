@@ -1,7 +1,6 @@
 package lab.cmego.com.cmegoclientandroid.serialization;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,9 +19,10 @@ import retrofit2.Retrofit;
 public class GsonConverterFactory extends Converter.Factory {
 
     public static GsonConverterFactory create() {
-        return create(new GsonBuilder()
-                .setLenient()
-                .create());
+//        return create(new GsonBuilder()
+//                .setLenient()
+//                .create());
+        return create(CustomGson.getInstance());
     }
 
     /**

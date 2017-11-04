@@ -13,13 +13,18 @@ import java.util.List;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
+import lab.cmego.com.cmegoclientandroid.model.Controller;
+import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
+import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
+
+import static lab.cmego.com.cmegoclientandroid.R.id.checkpointName;
 
 /**
  * Created by Amit Ishai on 10/11/2017.
  */
 
-public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecyclerViewAdapter.ViewHolder> {
+public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecyclerViewAdapter.ViewHolder> implements ProximityStateMachine.ProximityStateListener {
 
     private List<Gate> mData = Collections.emptyList();
     private LayoutInflater mInflater;
@@ -29,6 +34,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
     public GatesRecyclerViewAdapter(Context context, List<Gate> data) {
         mInflater = LayoutInflater.from(context);
         mData = data;
+        ProximityStateMachine.getInstance().addProximityStateListener(this);
     }
 
     public void setData(List<Gate> data) {
@@ -54,6 +60,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
     private void bind(ViewHolder holder, Gate gate) {
 
         Checkpoint checkpoint = ContentProvider.getInstance().getCheckpointForGate(gate);
+        Controller controller = ContentProvider.getInstance().getControllerForGate(gate.getId());
 
         String checkpointName = checkpoint == null ? "NONE" : checkpoint.getName();
 
@@ -61,12 +68,25 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
 
         holder.gateNameTV.setText("Gate Name: " + gate.getName());
 
+        WifiNetwork wifiNetwork = ContentProvider.getInstance().getWifiNetworkForGate(gate.getId());
+
+        if(wifiNetwork != null){
+            holder.wifiRangeStatusTV.setText("Wifi " +
+                    (ProximityStateMachine.getInstance().isConnectedToNetwork(wifiNetwork) ? "" : "NOT ") +
+                    "in Range");
+        }
+
     }
 
     // total number of rows
     @Override
     public int getItemCount() {
         return mData.size();
+    }
+
+    @Override
+    public void onProximityStateChanged() {
+        notifyDataSetChanged();
     }
 
 
@@ -80,7 +100,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
         public ViewHolder(View itemView) {
             super(itemView);
 
-            checkpointNameTV = (TextView)itemView.findViewById(R.id.checkpointName);
+            checkpointNameTV = (TextView)itemView.findViewById(checkpointName);
             gateNameTV = (TextView)itemView.findViewById(R.id.gateName);
             wifiRangeStatusTV = (TextView)itemView.findViewById(R.id.wifiRangeStatus);
             bleRangeStatusTV = (TextView)itemView.findViewById(R.id.bleRangeStatus);
