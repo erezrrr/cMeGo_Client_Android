@@ -42,9 +42,11 @@ import lab.cmego.com.cmegoclientandroid.model.Vehicle.Vehicle;
 import lab.cmego.com.cmegoclientandroid.model.Vehicle.VehicleIdentifier;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
+import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
+import lab.cmego.com.cmegoclientandroid.proximity.ProximityWakerUpper;
 import lab.cmego.com.cmegoclientandroid.service.MainService;
 
-public class MainActivity extends AppCompatActivity implements ContentProvider.ContentProviderInterface {
+public class MainActivity extends AppCompatActivity implements ContentProvider.ContentProviderInterface, ProximityStateMachine.ProximityStateListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private FirebaseAuth mAuth;
@@ -55,10 +57,16 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
     private Button mShowMyMembershipsButton;
     private GatesRecyclerViewAdapter mAdapter;
 
+    public static boolean IN_FOREGROUND = false;
+    private boolean mConsumedState= false;
+//    private boolean mGateStateConsumed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        mGateStateConsumed = false;
 
         startService(new Intent(this, MainService.class));
 
@@ -133,13 +141,8 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
         mAdapter.setClickListener(new GatesRecyclerViewAdapter.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                 Gate gate = mAdapter.getItem(position);
-
-
-                Intent intent = new Intent(MainActivity.this, GateActivity.class)
-                        .putExtra(GateActivity.EXTRA_GATE_ID, gate.getId());
-
-                startActivity(intent);
+                Gate gate = mAdapter.getItem(position);
+                startGateActivity(gate);
             }
         });
 
@@ -148,10 +151,39 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
         setAdapterWithGates();
     }
 
+    private void startGateActivity(Gate gate) {
+        Intent intent = new Intent(MainActivity.this, GateActivity.class)
+                .putExtra(GateActivity.EXTRA_GATE_ID, gate.getId());
+
+        startActivity(intent);
+    }
+
     private void setAdapterWithGates() {
         ArrayList<Gate> gates = (ArrayList<Gate>) ContentProvider.getInstance().getGates();
         mAdapter.setData(gates);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("condivityAutomatically","conditionalOpen onResume : " + ProximityWakerUpper.getInstance().isActivityConsumedState());
+
+        conditionalOpenGateActivityAutomatically();
+
+        ProximityStateMachine.getInstance().addProximityStateListener(this);
+
+        IN_FOREGROUND = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        IN_FOREGROUND = false;
+
+        ProximityStateMachine.getInstance().removeProximityStateListener(this);
+
+    }
+
 
     private void fetchAllMemberships() {
 
@@ -354,5 +386,41 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
     @Override
     public void onContentRefreshed() {
         setAdapterWithGates();
+    }
+
+    @Override
+    public void onProximityStateChanged() {
+        mConsumedState = false;
+//        mGateStateConsumed = false;
+
+//        if(ProximityStateMachine.getInstance().getState() == ProximityStateMachine.ProximityState.CONNECTED_AND_CLOSE){
+//            ProximityWakerUpper.getInstance().setActivityConsumedState(true);
+//            Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
+//            startGateActivity(closestGate);
+//        }
+        Log.d("condivityAutomatically","conditionalOpen onProximityStateChanged : " + ProximityWakerUpper.getInstance().isActivityConsumedState());
+
+        conditionalOpenGateActivityAutomatically();
+    }
+
+    private void conditionalOpenGateActivityAutomatically() {
+
+        Log.d("condivityAutomatically","conditionalOpen: " + ProximityWakerUpper.getInstance().isActivityConsumedState());
+
+        if(!isActivityConsumedState() && ProximityStateMachine.getInstance().getState() == ProximityStateMachine.ProximityState.CONNECTED_AND_CLOSE){
+            Log.d("condivityAutomatically","conditionalOpen: OPENING");
+            setActivityConsumedState(true);
+            Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
+            startGateActivity(closestGate);
+        }
+
+    }
+
+    private void setActivityConsumedState(boolean b) {
+        mConsumedState = b;
+    }
+
+    private boolean isActivityConsumedState() {
+        return mConsumedState;
     }
 }

@@ -19,6 +19,7 @@ import lab.cmego.com.cmegoclientandroid.connections.ConnectionManager;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.log.ScanLogger;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
+import lab.cmego.com.cmegoclientandroid.proximity.ProximityWakerUpper;
 
 /**
  * Created by Amit Ishai on 9/24/2017.
@@ -46,7 +47,7 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        ProximityWakerUpper.getInstance().init(this);
         ConnectionManager.getSharedInstance().init(this);
         ProximityStateMachine.getInstance().init();
 

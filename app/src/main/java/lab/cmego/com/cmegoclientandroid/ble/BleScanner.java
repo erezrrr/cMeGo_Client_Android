@@ -36,7 +36,7 @@ public class BleScanner {
     private Handler mHandler;
 
     private static final long SCAN_RUNNABLE_INTERVAL = 3000;
-    private static final long SCAN_LIFETIME = 15000;
+    private static final long SCAN_LIFETIME = 13000;
 
     private Runnable mRunnable = new Runnable() {
         @Override

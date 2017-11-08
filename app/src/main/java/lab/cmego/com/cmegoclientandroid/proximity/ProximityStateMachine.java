@@ -129,6 +129,12 @@ public class ProximityStateMachine implements ConnectionStateChangedListener, Co
         }
     }
 
+    public void removeProximityStateListener(ProximityStateListener listener) {
+        if (mListeners.contains(listener)) {
+            mListeners.remove(listener);
+        }
+    }
+
     private void notifyListeners() {
         for (ProximityStateListener listener : mListeners) {
             listener.onProximityStateChanged();
