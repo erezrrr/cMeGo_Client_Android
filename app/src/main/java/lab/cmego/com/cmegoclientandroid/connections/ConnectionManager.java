@@ -25,7 +25,7 @@ public class ConnectionManager implements WifiConnectionListener {
     private ArrayList<ConnectionStateChangedListener> mListeners = new ArrayList<>();
     private WifiManager mWifiManager;
     private Context mContext;
-    private String mCurrentSsid;
+    private WifiInfo mCurrentWifi;
 
     private boolean mConnected = false;
     private boolean mEnabled = false;
@@ -68,8 +68,8 @@ public class ConnectionManager implements WifiConnectionListener {
     }
 
     public void resolveState() {
-        mCurrentSsid = getCurrentSsid();
-        Log.d(TAG, "resolveState. State: " + mCurrentSsid);
+        mCurrentWifi = getCurrentlyConnectedWifiNetwork();
+        Log.d(TAG, "resolveState. State: " + mCurrentWifi);
     }
 
     public void addConnectionStateChangedListener(ConnectionStateChangedListener listener) {
@@ -104,27 +104,20 @@ public class ConnectionManager implements WifiConnectionListener {
         resolveStateAndNotifyListeners();
     }
 
-    public String getCurrentSsid() {
-        String ssid = null;
+    public WifiInfo getCurrentlyConnectedWifiNetwork() {
         ConnectivityManager cm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null) {
             return null;
         }
 
-//        if (networkInfo.isConnected()) {
-//            final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
-//            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-//                ssid = connectionInfo.getSSID();
-//            }
-//        }
-
         WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+
         if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
-            ssid = wifiInfo.getSSID();
+            return wifiInfo;
         }
 
-        return ssid;
+        return null;
     }
 
     public void destroy() {

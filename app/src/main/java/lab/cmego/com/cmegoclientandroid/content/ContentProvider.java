@@ -8,6 +8,7 @@ import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
+import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
 import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
 import lab.cmego.com.cmegoclientandroid.model.Controller;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
@@ -184,6 +185,47 @@ public class ContentProvider {
 
         return null;
     }
+
+    public List<WifiNetwork> getAllWifiNetworks() {
+        if(mAllDataForUser == null || mAllDataForUser.getWifiNetworks() == null){
+            return new ArrayList<>();
+        }
+
+        return mAllDataForUser.getWifiNetworks();
+    }
+
+    public List<BluetoothDevice> getAllBles() {
+        List<BluetoothDevice> retval = new ArrayList<>();
+
+        if(mAllDataForUser == null || mAllDataForUser.getGates() == null){
+            return retval;
+        }
+
+        for(Gate gate : mAllDataForUser.getGates()){
+            if(gate.getBluetoothDevice() != null){
+                retval.add(gate.getBluetoothDevice());
+            }
+        }
+
+        return retval;
+    }
+
+    public Gate getGateForBle(String bleMac) {
+
+        if(mAllDataForUser == null || mAllDataForUser.getGates() == null){
+            return null;
+        }
+
+        for(Gate gate : mAllDataForUser.getGates()){
+            if(gate.getBluetoothDevice() != null && gate.getBluetoothDevice().getMacAddress().equals(bleMac)){
+                return gate;
+            }
+        }
+
+        return null;
+    }
+
+
 
     public interface ContentProviderInterface {
         void onContentRefreshed();

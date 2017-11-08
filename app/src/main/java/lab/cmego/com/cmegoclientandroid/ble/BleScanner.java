@@ -6,10 +6,14 @@ import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Amit Ishai on 9/24/2017.
@@ -28,7 +32,60 @@ public class BleScanner {
     private HashMap<String, ScanResult> mCurrentResults = new HashMap<>();
 
     private ArrayList<ScanBleInterface> mListeners = new ArrayList<>();
+    private Handler mHandler;
 
+    private static final long SCAN_RUNNABLE_INTERNVAL = 3000;
+    private static final long SCAN_LIFETIME = 10000;
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            boolean removed = removeStaleScans();
+//            stopScanning();
+
+            if(removed){
+                notifyOnChange();
+            }
+
+            startScanning();
+
+
+//            mHandler.postDelayed(this, SCAN_RUNNABLE_INTERNVAL);
+        }
+    };
+
+    private void notifyOnChange() {
+        for(ScanBleInterface listener : mListeners){
+            listener.onChange();
+        }
+    }
+
+    private boolean removeStaleScans() {
+
+        boolean removed = false;
+
+        if(mCurrentResults == null){
+            return removed;
+        }
+
+        Set<String> keys = new HashSet<>(mCurrentResults.keySet());
+
+        for(String key : keys){
+            ScanResult scanResult = mCurrentResults.get(key);
+
+            if(isStale(scanResult)){
+                mCurrentResults.remove(key);
+                removed = true;
+            }
+        }
+
+        return removed;
+    }
+
+    private boolean isStale(ScanResult scanResult) {
+        long scanTimeInMs = TimeUnit.NANOSECONDS.toMillis(scanResult.getTimestampNanos());
+        return System.currentTimeMillis() - scanTimeInMs > SCAN_LIFETIME;
+    }
 
     public static BleScanner getInstance(){
         if(sInstance == null){
@@ -58,16 +115,14 @@ public class BleScanner {
         btManager = (BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
         btAdapter = btManager.getAdapter();
         btScanner = btAdapter.getBluetoothLeScanner();
+
+        mHandler = new Handler();
     }
 
     // Device scan callback.
     private ScanCallback leScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-
-            if(!result.getDevice().getAddress().contains("1B:78:C8")){
-                return;
-            }
 
             Log.d("dfgdfgdfg","dfgdfgdfgdfgdfgdf: " + result.getRssi());
             mCurrentResults.put(result.getDevice().getAddress(), result);
@@ -88,15 +143,18 @@ public class BleScanner {
         btScanner.flushPendingScanResults(leScanCallback);
         btScanner.stopScan(leScanCallback);
         btScanner.startScan(leScanCallback);
+        mHandler.postDelayed(mRunnable, SCAN_RUNNABLE_INTERNVAL);
     }
 
     public void stopScanning() {
         System.out.println("stopping scanning");
         btScanner.stopScan(leScanCallback);
+        mHandler.removeCallbacks(mRunnable);
     }
 
     public interface ScanBleInterface{
         void onScan(int callbackType, ScanResult result);
+        void onChange();
     }
 
 }

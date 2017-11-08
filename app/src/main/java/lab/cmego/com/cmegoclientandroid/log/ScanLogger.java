@@ -39,4 +39,9 @@ public class ScanLogger implements BleScanner.ScanBleInterface {
         FileManager.appendToFileAsync(FileManager.DIRECTORY_CEME, FileManager.FILE_BLE_LOG,
                 strDate + " Device: " + result.getDevice().getName() + "(" +  result.getDevice().getAddress() + ") rssi:" + result.getRssi() + "\n");
     }
+
+    @Override
+    public void onChange() {
+
+    }
 }

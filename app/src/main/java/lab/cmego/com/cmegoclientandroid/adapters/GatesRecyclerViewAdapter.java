@@ -70,11 +70,15 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
 
         WifiNetwork wifiNetwork = ContentProvider.getInstance().getWifiNetworkForGate(gate.getId());
 
-        if(wifiNetwork != null){
-            holder.wifiRangeStatusTV.setText("Wifi " +
-                    (ProximityStateMachine.getInstance().isConnectedToNetwork(wifiNetwork) ? "" : "NOT ") +
-                    "in Range");
-        }
+        holder.wifiRangeStatusTV.setText(
+                ((wifiNetwork != null && ProximityStateMachine.getInstance().isConnectedToNetwork(wifiNetwork)) ?
+                        "Connected to Wifi" : "Not connected to Wifi"));
+
+        Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
+
+        holder.bleRangeStatusTV.setText(
+                ((closestGate != null && closestGate.getId().equals(gate.getId())) ?
+                        "In BLE range" : "Not in BLE range"));
 
     }
 

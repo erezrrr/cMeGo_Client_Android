@@ -82,6 +82,11 @@ public class BleScanAggregator implements BleScanner.ScanBleInterface {
         }
     }
 
+    @Override
+    public void onChange() {
+
+    }
+
     private void removeStale() {
 
         HashSet<String> keys = new HashSet<>(mLastResults.keySet());

@@ -54,8 +54,8 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
         BleScanner.getInstance().init(this);
         BleScanner.getInstance().startScanning();
 
-        BleScanAggregator.getInstance().start();
-        BleProximityProvider.getInstance().start();
+//        BleScanAggregator.getInstance().start();
+//        BleProximityProvider.getInstance().start();
 
         Persistence.getSharedInstance().init(this);
 
@@ -85,6 +85,11 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 
     @Override
     public void onScan(int callbackType, ScanResult result) {
+
+    }
+
+    @Override
+    public void onChange() {
 
     }
 }

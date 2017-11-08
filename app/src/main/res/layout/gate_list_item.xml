@@ -22,14 +22,14 @@
         android:id="@+id/wifiRangeStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Not In Wifi Range"
+        android:text="Not connected to wifi"
         android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/bleRangeStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Not In BLE Range"
+        android:text="Not in BLE range"
         android:textSize="20sp"/>
 
 </LinearLayout>
