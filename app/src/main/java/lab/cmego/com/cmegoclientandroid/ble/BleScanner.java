@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Amit Ishai on 9/24/2017.
@@ -29,13 +28,13 @@ public class BleScanner {
 
     private static BleScanner sInstance;
 
-    private HashMap<String, ScanResult> mCurrentResults = new HashMap<>();
+    private HashMap<String, TimedScanResult> mCurrentResults = new HashMap<>();
 
     private ArrayList<ScanBleInterface> mListeners = new ArrayList<>();
     private Handler mHandler;
 
     private static final long SCAN_RUNNABLE_INTERNVAL = 3000;
-    private static final long SCAN_LIFETIME = 10000;
+    private static final long SCAN_LIFETIME = 15000;
 
     private Runnable mRunnable = new Runnable() {
         @Override
@@ -47,7 +46,7 @@ public class BleScanner {
                 notifyOnChange();
             }
 
-            startScanning();
+//            startScanning();
 
 
 //            mHandler.postDelayed(this, SCAN_RUNNABLE_INTERNVAL);
@@ -71,7 +70,7 @@ public class BleScanner {
         Set<String> keys = new HashSet<>(mCurrentResults.keySet());
 
         for(String key : keys){
-            ScanResult scanResult = mCurrentResults.get(key);
+            TimedScanResult scanResult = mCurrentResults.get(key);
 
             if(isStale(scanResult)){
                 mCurrentResults.remove(key);
@@ -82,9 +81,8 @@ public class BleScanner {
         return removed;
     }
 
-    private boolean isStale(ScanResult scanResult) {
-        long scanTimeInMs = TimeUnit.NANOSECONDS.toMillis(scanResult.getTimestampNanos());
-        return System.currentTimeMillis() - scanTimeInMs > SCAN_LIFETIME;
+    private boolean isStale(TimedScanResult scanResult) {
+        return System.currentTimeMillis() - scanResult.getTime() > SCAN_LIFETIME;
     }
 
     public static BleScanner getInstance(){
@@ -125,16 +123,18 @@ public class BleScanner {
         public void onScanResult(int callbackType, ScanResult result) {
 
             Log.d("dfgdfgdfg","dfgdfgdfgdfgdfgdf: " + result.getRssi());
-            mCurrentResults.put(result.getDevice().getAddress(), result);
+            mCurrentResults.put(result.getDevice().getAddress(), new TimedScanResult(result));
 
             for (ScanBleInterface listener: mListeners){
                 listener.onScan(callbackType, result);
             }
 
+            notifyOnChange();
+
         }
     };
 
-    public HashMap<String, ScanResult> getCurrentResults() {
+    public HashMap<String, TimedScanResult> getCurrentResults() {
         return mCurrentResults;
     }
 

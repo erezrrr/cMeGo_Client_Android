@@ -13,7 +13,6 @@ import java.util.List;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
-import lab.cmego.com.cmegoclientandroid.model.Controller;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
@@ -60,7 +59,6 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
     private void bind(ViewHolder holder, Gate gate) {
 
         Checkpoint checkpoint = ContentProvider.getInstance().getCheckpointForGate(gate);
-        Controller controller = ContentProvider.getInstance().getControllerForGate(gate.getId());
 
         String checkpointName = checkpoint == null ? "NONE" : checkpoint.getName();
 
@@ -80,6 +78,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
                 ((closestGate != null && closestGate.getId().equals(gate.getId())) ?
                         "In BLE range" : "Not in BLE range"));
 
+        holder.proximityStatusTV.setText("Proximity Status: " + ProximityStateMachine.getInstance().getState());
     }
 
     // total number of rows
@@ -100,6 +99,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
         public TextView gateNameTV;
         public TextView wifiRangeStatusTV;
         public TextView bleRangeStatusTV;
+        public TextView proximityStatusTV;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +108,7 @@ public class GatesRecyclerViewAdapter extends RecyclerView.Adapter<GatesRecycler
             gateNameTV = (TextView)itemView.findViewById(R.id.gateName);
             wifiRangeStatusTV = (TextView)itemView.findViewById(R.id.wifiRangeStatus);
             bleRangeStatusTV = (TextView)itemView.findViewById(R.id.bleRangeStatus);
+            proximityStatusTV = (TextView)itemView.findViewById(R.id.proximityStatus);
 
             itemView.setOnClickListener(this);
         }

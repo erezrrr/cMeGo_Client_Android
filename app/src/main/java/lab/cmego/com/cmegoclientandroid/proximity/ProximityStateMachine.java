@@ -1,34 +1,31 @@
 package lab.cmego.com.cmegoclientandroid.proximity;
 
-import android.bluetooth.le.ScanResult;
-import android.net.wifi.WifiInfo;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import lab.cmego.com.cmegoclientandroid.ble.BleScanner;
-import lab.cmego.com.cmegoclientandroid.connections.ConnectionManager;
+import lab.cmego.com.cmegoclientandroid.ble.proximity.BleProximityResolver;
 import lab.cmego.com.cmegoclientandroid.connections.ConnectionStateChangedListener;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.model.BluetoothDevice;
 import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
+import lab.cmego.com.cmegoclientandroid.wifi.ConnectedNetworkResolver;
 
 /**
  * Created by Owner on 04/11/2017.
  */
 
-public class ProximityStateMachine implements ConnectionStateChangedListener, ContentProvider.ContentProviderInterface, BleScanner.ScanBleInterface {
+public class ProximityStateMachine implements ConnectionStateChangedListener, ContentProvider.ContentProviderInterface, BleProximityResolver.BleProximityListener, ConnectedNetworkResolver.ConnectedNetworkListener {
+
+    public enum ProximityState { DEFAULT, ONLY_CLOSE, ONLY_CONNECTED, CONNECTED_AND_CLOSE };
+
+    private ProximityState mState = ProximityState.DEFAULT;
 
     private static ProximityStateMachine sInstance;
-    private WifiInfo mCurrentWifiNetwork;
-    private String mConnectedWifiNetworkId;
     private ArrayList<ProximityStateListener> mListeners = new ArrayList<>();
-    private List<WifiNetwork> mWifiNetworksToListenFor = new ArrayList<>();
-    private List<BluetoothDevice> mBlesToListenFor;
-    private HashMap<String, ScanResult> mCurrentBleResults;
-    private BluetoothDevice mClosestBle;
+    private BleProximityResolver mBleProximityResolver;
+    private ConnectedNetworkResolver mConnectedNetworkResolver;
+
+    private WifiNetwork mConnectedNetwork;
     private Gate mClosestGate;
 
     private ProximityStateMachine(){}
@@ -42,79 +39,88 @@ public class ProximityStateMachine implements ConnectionStateChangedListener, Co
     }
 
     public void init(){
-        ConnectionManager.getSharedInstance().addConnectionStateChangedListener(this);
         ContentProvider.getInstance().addListener(this);
-        BleScanner.getInstance().addListener(this);
-        refreshResolveNotify();
+
+        mConnectedNetworkResolver = new ConnectedNetworkResolver();
+        mConnectedNetworkResolver.addListener(this);
+        mConnectedNetworkResolver.start();
+
+        mBleProximityResolver = new BleProximityResolver();
+        mBleProximityResolver.addListener(this);
+        mBleProximityResolver.start();
+
+        resolveAndNotifyIfStateChanged();
     }
 
-    private void refreshResolveNotify(){
-        refreshData();
+    private void resolveAndNotifyIfStateChanged(){
         resolveState();
-        notifyListeners();
     }
 
     private void resolveState() {
-        setCurrentWifi();
-        setCurrentBle();
-    }
 
-    private void setCurrentBle() {
-        mCurrentBleResults = BleScanner.getInstance().getCurrentResults();
+        WifiNetwork currentWifi = mConnectedNetwork;
+        Gate currentGate = mClosestGate;
 
-        if(mCurrentBleResults == null || mCurrentBleResults.size() == 0){
-            mClosestBle = null;
-            mClosestGate = null;
-            return;
+        WifiNetwork newConnectedNetwork = mConnectedNetworkResolver.getConnectedNetwork();
+        BluetoothDevice newClosestBle = mBleProximityResolver.getClosestBle();
+        Gate newGate = null;
+
+        if(newClosestBle != null){
+            newGate = ContentProvider.getInstance().getGateForBle(newClosestBle.getMacAddress());
         }
 
-        // find closest...
+        if(gatesAreDifferent(currentGate, newGate) || wifiNetworkAreDifferent(currentWifi, newConnectedNetwork)){
 
-        int maxRssi = -1000;
-        BluetoothDevice closestBle = null;
+            // There has been a change, we can do stuff now.
+            mState = resolveProximityState(newGate, newConnectedNetwork);
+            mConnectedNetwork = newConnectedNetwork;
+            mClosestGate = newGate;
 
-        for(ScanResult scanResult : mCurrentBleResults.values()){
+            notifyListeners();
+        }
+     }
 
-            BluetoothDevice temp = getMatchingBle(scanResult);
+    public ProximityState getState() {
+        return mState;
+    }
 
-            if(temp != null){
+    // TODO fix this up
+    private static boolean wifiNetworkAreDifferent(WifiNetwork a, WifiNetwork b) {
+        if(a == null && b == null){
+            return false;
+        } else if(a == null || b == null){
+            return true;
+        }
 
-                if(scanResult.getRssi() > maxRssi){
-                    maxRssi = scanResult.getRssi();
-                    closestBle = temp;
-                }
+        return !a.getBssid().equals(b.getBssid());
+    }
 
+    private boolean gatesAreDifferent(Gate a, Gate b) {
+        if(a == null && b == null){
+            return false;
+        } else if(a == null || b == null){
+            return true;
+        }
+
+        return !a.getId().equals(b.getId());
+    }
+
+    public static ProximityState resolveProximityState(Gate gate, WifiNetwork wifiNetwork) {
+
+        if(wifiNetwork == null && gate == null){
+            return ProximityState.DEFAULT;
+        } else if(gate == null){
+            return ProximityState.ONLY_CONNECTED;
+        } else {
+
+            WifiNetwork wifiNetworkForGate = ContentProvider.getInstance().getWifiNetworkForGate(gate.getId());
+
+            if(wifiNetworkAreDifferent(wifiNetwork, wifiNetworkForGate)){
+                return ProximityState.ONLY_CLOSE;
             }
 
+            return ProximityState.CONNECTED_AND_CLOSE;
         }
-
-        if(closestBle == null){
-            mClosestBle = null;
-            mClosestGate = null;
-            return;
-        }
-
-        mClosestBle = closestBle;
-        mClosestGate = ContentProvider.getInstance().getGateForBle(mClosestBle.getMacAddress());
-    }
-
-    private BluetoothDevice getMatchingBle(ScanResult scanResult) {
-        if(mCurrentBleResults == null || mCurrentBleResults.size() == 0){
-            return null;
-        }
-
-        for(BluetoothDevice bluetoothDevice : mBlesToListenFor){
-            if(bluetoothDevice.getMacAddress().equals(scanResult.getDevice().getAddress())){
-                return bluetoothDevice;
-            }
-        }
-
-        return null;
-    }
-
-    private void refreshData() {
-        mWifiNetworksToListenFor = ContentProvider.getInstance().getAllWifiNetworks();
-        mBlesToListenFor = ContentProvider.getInstance().getAllBles();
     }
 
     public void addProximityStateListener(ProximityStateListener listener) {
@@ -129,62 +135,41 @@ public class ProximityStateMachine implements ConnectionStateChangedListener, Co
         }
     }
 
-    private void setCurrentWifi(){
-        mCurrentWifiNetwork = ConnectionManager.getSharedInstance().getCurrentlyConnectedWifiNetwork();
-
-        if(mCurrentWifiNetwork == null){
-            //Not connected to wifi
-            mConnectedWifiNetworkId = null;
-            return;
-        }
-
-        for(WifiNetwork wifiNetwork : mWifiNetworksToListenFor){
-            if(wifiNetwork.getBssid().equals(mCurrentWifiNetwork.getBSSID())){
-                mConnectedWifiNetworkId = wifiNetwork.getId();
-            }
-        }
-    }
-
-
-    public boolean isConnectedToNetwork(WifiNetwork wifiNetwork) {
-
-        if(mCurrentWifiNetwork == null){
-            return false;
-        }
-
-        String current = mCurrentWifiNetwork.getBSSID();
-        String checked = wifiNetwork.getBssid();
-
-        return current.equals(checked);
-    }
-
     @Override
     public void onConnectionStateChanged() {
-        refreshResolveNotify();
+        resolveAndNotifyIfStateChanged();
     }
 
     @Override
     public void onConnectionError(String errorMessage) {
-        refreshResolveNotify();
+        resolveAndNotifyIfStateChanged();
     }
 
     @Override
     public void onContentRefreshed() {
-        refreshResolveNotify();
+        resolveAndNotifyIfStateChanged();
     }
 
     @Override
-    public void onScan(int callbackType, ScanResult result) {
-        refreshResolveNotify();
-    }
-
-    @Override
-    public void onChange() {
-        refreshResolveNotify();
+    public void onBleProximityUpdate() {
+        resolveAndNotifyIfStateChanged();
     }
 
     public Gate getClosestGate() {
         return mClosestGate;
+    }
+
+    @Override
+    public void onConnectedNetworkUpdate() {
+        resolveAndNotifyIfStateChanged();
+    }
+
+    public boolean isConnectedToNetwork(WifiNetwork wifiNetwork) {
+        return mConnectedNetworkResolver.isConnectedToNetwork(wifiNetwork);
+    }
+
+    public WifiNetwork getConnectedNetwork() {
+        return mConnectedNetwork;
     }
 
     public interface ProximityStateListener{
