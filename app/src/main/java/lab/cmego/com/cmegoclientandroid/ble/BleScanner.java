@@ -4,7 +4,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -33,23 +35,19 @@ public class BleScanner {
     private ArrayList<ScanBleInterface> mListeners = new ArrayList<>();
     private Handler mHandler;
 
-    private static final long SCAN_RUNNABLE_INTERNVAL = 3000;
+    private static final long SCAN_RUNNABLE_INTERVAL = 3000;
     private static final long SCAN_LIFETIME = 15000;
 
     private Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             boolean removed = removeStaleScans();
-//            stopScanning();
 
             if(removed){
                 notifyOnChange();
             }
 
-//            startScanning();
-
-
-//            mHandler.postDelayed(this, SCAN_RUNNABLE_INTERNVAL);
+            mHandler.postDelayed(this, SCAN_RUNNABLE_INTERVAL);
         }
     };
 
@@ -82,6 +80,7 @@ public class BleScanner {
     }
 
     private boolean isStale(TimedScanResult scanResult) {
+        Log.d("sdsdfsdf","sdsdf Time between scans: " + (System.currentTimeMillis() - scanResult.getTime()));
         return System.currentTimeMillis() - scanResult.getTime() > SCAN_LIFETIME;
     }
 
@@ -142,8 +141,16 @@ public class BleScanner {
         System.out.println("start scanning");
         btScanner.flushPendingScanResults(leScanCallback);
         btScanner.stopScan(leScanCallback);
-        btScanner.startScan(leScanCallback);
-        mHandler.postDelayed(mRunnable, SCAN_RUNNABLE_INTERNVAL);
+
+        ArrayList<ScanFilter> scanFilters = new ArrayList<>();
+
+        ScanSettings scanSettings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .build();
+
+        btScanner.startScan(scanFilters, scanSettings, leScanCallback);
+
+        mHandler.postDelayed(mRunnable, SCAN_RUNNABLE_INTERVAL);
     }
 
     public void stopScanning() {
