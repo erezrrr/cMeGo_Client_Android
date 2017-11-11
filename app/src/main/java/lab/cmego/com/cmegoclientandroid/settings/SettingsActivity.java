@@ -15,6 +15,7 @@ import lab.cmego.com.cmegoclientandroid.R;
 public class SettingsActivity extends AppCompatActivity {
 
     private SettingsItem mShowNotificationsItem;
+    private SettingsItem mConnectToWifiAutomatically;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,10 +35,22 @@ public class SettingsActivity extends AppCompatActivity {
                 renderStates();
             }
         });
+
+        mConnectToWifiAutomatically = (SettingsItem) findViewById(R.id.automaticConnectToWifi);
+
+        mConnectToWifiAutomatically.setListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                Persistence.getSharedInstance().setConnectToWifiAutomatically(checked);
+                renderStates();
+            }
+        });
+
     }
 
 
     private void renderStates(){
         mShowNotificationsItem.setSwitchState(Persistence.getSharedInstance().getShowNotifications());
+        mConnectToWifiAutomatically.setSwitchState(Persistence.getSharedInstance().getConnectToWifiAutomatically());
     }
 }

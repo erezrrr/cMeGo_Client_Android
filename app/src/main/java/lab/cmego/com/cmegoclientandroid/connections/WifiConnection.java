@@ -1,8 +1,6 @@
 package lab.cmego.com.cmegoclientandroid.connections;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -58,6 +56,9 @@ public class WifiConnection implements Connection, WifiConnectionListener {
         resolveState();
     }
 
+    public void refreshState(){
+        resolveState();
+    }
 //    public void destroy(){
 //        WifiReceiver.getSharedInstance().removeListener(this);
 //    }
@@ -163,7 +164,7 @@ public class WifiConnection implements Connection, WifiConnectionListener {
 
     @Override
     public void resolveState() {
-        String currentSsid = getCurrentSsid(mContext);
+        String currentSsid = getCurrentSsid();
 
         // Simple approach for now, not taking intermediate states (awaiting...) into consideration.
         if(!TextUtils.isEmpty(currentSsid) && currentSsid.equals(mConnectionDescriptor.getSsid())){
@@ -240,21 +241,13 @@ public class WifiConnection implements Connection, WifiConnectionListener {
 //        enableWifi();
     }
 
-    private String getCurrentSsid(Context context) {
-        String ssid = null;
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            return null;
+    private String getCurrentSsid() {
+        WifiInfo wifiInfo = ConnectionManager.getSharedInstance().getCurrentlyConnectedWifiNetwork();
+
+        if(wifiInfo != null){
+            return wifiInfo.getSSID();
         }
 
-        if (networkInfo.isConnected()) {
-            final WifiInfo connectionInfo = mWifiManager.getConnectionInfo();
-            if (connectionInfo != null && !TextUtils.isEmpty(connectionInfo.getSSID())) {
-                ssid = connectionInfo.getSSID();
-            }
-        }
-
-        return ssid;
+        return null;
     }
 }

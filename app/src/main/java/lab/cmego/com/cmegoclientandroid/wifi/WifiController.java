@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.HashMap;
 
+import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.connections.RetryWifiConnection;
 import lab.cmego.com.cmegoclientandroid.connections.WifiConnectionDescriptor;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
@@ -45,7 +46,8 @@ public class WifiController implements ProximityStateMachine.ProximityStateListe
 
         ProximityStateMachine.ProximityState state = ProximityStateMachine.getInstance().getState();
 
-        if(state == ProximityStateMachine.ProximityState.ONLY_CLOSE){
+        if(state == ProximityStateMachine.ProximityState.ONLY_CLOSE &&
+                Persistence.getSharedInstance().getConnectToWifiAutomatically()){
             Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
             WifiNetwork wifiNetwork = ContentProvider.getInstance().getWifiNetworkForGate(closestGate.getId());
             connectToNetwork(wifiNetwork);
@@ -58,10 +60,13 @@ public class WifiController implements ProximityStateMachine.ProximityStateListe
 
         if(connection == null){
             connection = new RetryWifiConnection(mContext,
-                new WifiConnectionDescriptor()
-                        .setPassword(wifiNetwork.getPassword())
-                        .setSsid(wifiNetwork.getSsid()));
+                    new WifiConnectionDescriptor()
+                            .setPassword(wifiNetwork.getPassword())
+                            .setSsid(wifiNetwork.getSsid()));
+        } else {
+            connection.refreshState();
         }
+
 
         mConnections.put(wifiNetwork.getBssid(), connection);
 

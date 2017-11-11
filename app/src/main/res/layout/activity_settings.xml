@@ -19,6 +19,12 @@
                 android:id="@+id/showNotificationsItem"
                 SettingsItem:item_name="Show Notifications"/>
 
+        <lab.cmego.com.cmegoclientandroid.settings.SettingsItem
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/automaticConnectToWifi"
+            SettingsItem:item_name="Connect to Wifi automatically"/>
+
     </LinearLayout>
 
 </RelativeLayout>

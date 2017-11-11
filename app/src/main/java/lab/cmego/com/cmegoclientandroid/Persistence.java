@@ -21,6 +21,7 @@ public class Persistence {
     private static final String PASSWORD = "password";
     private static final String ALL_DATA = "all_data";
     private static final String SHOW_NOTIFICATIONS = "show_notifications";
+    private static final String CONNECT_TO_WIFI_AUTOMATICALLY = "connect_to_wifi_automatically";
 
     private static Persistence sSharedInstance;
     private Context mContext;
@@ -51,6 +52,14 @@ public class Persistence {
 
     public boolean getShowNotifications(){
         return getBooleanValue(SHOW_NOTIFICATIONS, DefaultValues.SHOW_NOTIFICATIONS);
+    }
+
+    public void setConnectToWifiAutomatically(boolean value) {
+        setBooleanValue(CONNECT_TO_WIFI_AUTOMATICALLY, value);
+    }
+
+    public boolean getConnectToWifiAutomatically(){
+        return getBooleanValue(CONNECT_TO_WIFI_AUTOMATICALLY, DefaultValues.CONNECT_TO_WIFI_AUTOMATICALLY);
     }
 
     private void setSecure(String key, String value) {
