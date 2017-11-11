@@ -22,7 +22,6 @@ import java.util.Date;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.adapters.GatesRecyclerViewAdapter;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
-import lab.cmego.com.cmegoclientandroid.create.CreateVehicleActivity;
 import lab.cmego.com.cmegoclientandroid.model.Account;
 import lab.cmego.com.cmegoclientandroid.model.Billing.BillingDetails;
 import lab.cmego.com.cmegoclientandroid.model.Billing.CashPaymentMethod;
@@ -45,6 +44,7 @@ import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityWakerUpper;
 import lab.cmego.com.cmegoclientandroid.service.MainService;
+import lab.cmego.com.cmegoclientandroid.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity implements ContentProvider.ContentProviderInterface, ProximityStateMachine.ProximityStateListener {
 
@@ -53,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
     private FirebaseAuth.AuthStateListener mAuthListener;
     private Button mSignOutButton;
     private TextView mUserDetails;
-    private Button mShowAllMembershipsButton;
-    private Button mShowMyMembershipsButton;
     private GatesRecyclerViewAdapter mAdapter;
 
     public static boolean IN_FOREGROUND = false;
@@ -66,8 +64,6 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mGateStateConsumed = false;
-
         startService(new Intent(this, MainService.class));
 
         mAuth = FirebaseAuth.getInstance();
@@ -77,39 +73,27 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
 
         mSignOutButton = (Button)findViewById(R.id.signOutButton);
         mUserDetails = (TextView)findViewById(R.id.userDetails);
-        mShowAllMembershipsButton = (Button)findViewById(R.id.showAllMembershipsButton);
-        mShowMyMembershipsButton = (Button)findViewById(R.id.showMyMembershipsButton);
 
-        mShowMyMembershipsButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.creationPortalActivityButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchAllMemberships();
-                //                showMyMemberships();
+                openCreationPortalActivity();
             }
         });
 
-        findViewById(R.id.showAllVehicles).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.showPortalButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAllVehicles();
+                openShowPortalActivity();
             }
         });
 
-        findViewById(R.id.createVehicleButton).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.settingsButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createVehicle();
+                openSettingsActivity();
             }
         });
-
-        mShowAllMembershipsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showMemberships();
-            }
-        });
-
-//        addUserData();
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -179,38 +163,19 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
     protected void onPause() {
         super.onPause();
         IN_FOREGROUND = false;
-
         ProximityStateMachine.getInstance().removeProximityStateListener(this);
-
     }
 
-
-    private void fetchAllMemberships() {
-
-//        NetworkClient.getInstance().getAllMembershipsForProfile(new ResultListener<Map<String, Membership>>() {
-//            @Override
-//            public void onResult(Map<String, Membership> stringMembershipMap) {
-//                Log.d("","");
-//            }
-//
-//            @Override
-//            public void onError(Exception e) {
-//                Log.d("","");
-//            }
-//        });
-
+    private void openCreationPortalActivity() {
+        startActivity(new Intent(MainActivity.this, CreationPortalActivity.class));
     }
 
-    private void createVehicle() {
-        startActivity(new Intent(MainActivity.this, CreateVehicleActivity.class));
+    private void openShowPortalActivity() {
+        startActivity(new Intent(MainActivity.this, ShowPortalActivity.class));
     }
 
-    private void showAllVehicles() {
-        startActivity(new Intent(MainActivity.this, ShowAllVehiclesActivity.class));
-    }
-
-    private void showMyMemberships() {
-        startActivity(new Intent(MainActivity.this, ShowMyMembershipsActivity.class));
+    private void openSettingsActivity() {
+        startActivity(new Intent(MainActivity.this, SettingsActivity.class));
     }
 
     private void showMemberships() {

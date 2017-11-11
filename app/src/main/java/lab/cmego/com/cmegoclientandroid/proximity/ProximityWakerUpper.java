@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.activities.MainActivity;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
@@ -91,7 +92,11 @@ public class ProximityWakerUpper implements ProximityStateMachine.ProximityState
         if(MainActivity.IN_FOREGROUND){
             // Do nothing, MainActivity will handle
         } else {
-            showNotificationForEnteringGate(closestGate);
+
+            if(Persistence.getSharedInstance().getShowNotifications()){
+                showNotificationForEnteringGate(closestGate);
+            }
+
         }
     }
 

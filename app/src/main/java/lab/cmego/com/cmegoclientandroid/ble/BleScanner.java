@@ -35,8 +35,8 @@ public class BleScanner {
     private ArrayList<ScanBleInterface> mListeners = new ArrayList<>();
     private Handler mHandler;
 
-    private static final long SCAN_RUNNABLE_INTERVAL = 3000;
-    private static final long SCAN_LIFETIME = 13000;
+    private static final long SCAN_RUNNABLE_INTERVAL = 1000;
+    private static final long SCAN_LIFETIME = 22000;
 
     private Runnable mRunnable = new Runnable() {
         @Override

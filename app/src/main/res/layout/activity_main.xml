@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/buttons"/>
 
-
     <LinearLayout android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:id="@+id/buttons"
@@ -22,23 +21,18 @@
 
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/createVehicleButton"
-                android:text="Create Vehicle"/>
+                android:id="@+id/creationPortalActivityButton"
+                android:text="Creation Portal"/>
 
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/showAllMembershipsButton"
-                android:text="Show All Memberships"/>
+                android:id="@+id/showPortalButton"
+                android:text="Show Portal"/>
 
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/showMyMembershipsButton"
-                android:text="Show My Memberships"/>
-
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/showAllVehicles"
-                android:text="Show All Vehicles"/>
+                android:id="@+id/settingsButton"
+                android:text="Settings"/>
 
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

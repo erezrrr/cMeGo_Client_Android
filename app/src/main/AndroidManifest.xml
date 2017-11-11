@@ -43,7 +43,13 @@
         </activity>
         <activity android:name=".activities.ShowAllVehiclesActivity">
         </activity>
+        <activity android:name=".activities.CreationPortalActivity">
+        </activity>
         <activity android:name=".create.CreateVehicleActivity">
+        </activity>
+        <activity android:name=".activities.ShowPortalActivity">
+        </activity>
+        <activity android:name=".settings.SettingsActivity">
         </activity>
 
         <service

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import java.util.HashSet;
 import java.util.Set;
 
+import lab.cmego.com.cmegoclientandroid.settings.DefaultValues;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -18,6 +20,7 @@ public class Persistence {
     private static final String AUTHENTICATION_TOKEN = "authentication_token";
     private static final String PASSWORD = "password";
     private static final String ALL_DATA = "all_data";
+    private static final String SHOW_NOTIFICATIONS = "show_notifications";
 
     private static Persistence sSharedInstance;
     private Context mContext;
@@ -40,6 +43,14 @@ public class Persistence {
 
     public String getAuthenticationToken(){
         return getSecure(AUTHENTICATION_TOKEN);
+    }
+
+    public void setShowNotifications(boolean value){
+        setBooleanValue(SHOW_NOTIFICATIONS, value);
+    }
+
+    public boolean getShowNotifications(){
+        return getBooleanValue(SHOW_NOTIFICATIONS, DefaultValues.SHOW_NOTIFICATIONS);
     }
 
     private void setSecure(String key, String value) {
