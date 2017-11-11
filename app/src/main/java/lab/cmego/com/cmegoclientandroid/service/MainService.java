@@ -42,7 +42,7 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
                 .setContentText("")
                 .setContentIntent(pendingIntent).build();
 
-        startForeground(1337, notification);
+//        startForeground(1337, notification);
     }
 
     @Override
