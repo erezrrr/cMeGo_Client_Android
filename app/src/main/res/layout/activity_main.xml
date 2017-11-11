@@ -39,6 +39,11 @@
                 android:id="@+id/signOutButton"
                 android:text="Sign Out"/>
 
+        <Button android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/newUIButton"
+                android:text="New UI"/>
+
         <TextView android:id="@+id/userDetails"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"/>

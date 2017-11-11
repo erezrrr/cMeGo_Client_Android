@@ -95,6 +95,13 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
             }
         });
 
+        findViewById(R.id.newUIButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openNewUIActivity();
+            }
+        });
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -178,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements ContentProvider.C
         startActivity(new Intent(MainActivity.this, SettingsActivity.class));
     }
 
-    private void showMemberships() {
-        startActivity(new Intent(MainActivity.this, ShowMembershipsActivity.class));
+    private void openNewUIActivity() {
+        startActivity(new Intent(MainActivity.this, NavMainActivity.class));
     }
 
     private void addUserData() {

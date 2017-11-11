@@ -3,4 +3,9 @@
     <string ssid="title_activity_initial">InitialActivity</string>
     <string ssid="title_activity_show_memberships">ShowMembershipsActivity</string>
     <string name="app_name">cMeGo Client</string>
+    <string-array name="navigation_drawer_items_array">
+        <item>Connect</item>
+        <item>Fixtures</item>
+        <item>Table</item>
+    </string-array>
 </resources>

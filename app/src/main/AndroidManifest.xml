@@ -51,6 +51,8 @@
         </activity>
         <activity android:name=".settings.SettingsActivity">
         </activity>
+        <activity android:theme="@style/Theme.AppCompat.Light.NoActionBar" android:name=".activities.NavMainActivity" >
+        </activity>
 
         <service
             android:name=".service.MainService"
