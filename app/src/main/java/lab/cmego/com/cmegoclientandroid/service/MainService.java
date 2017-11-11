@@ -20,6 +20,7 @@ import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.log.ScanLogger;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityStateMachine;
 import lab.cmego.com.cmegoclientandroid.proximity.ProximityWakerUpper;
+import lab.cmego.com.cmegoclientandroid.wifi.WifiController;
 
 /**
  * Created by Amit Ishai on 9/24/2017.
@@ -54,6 +55,8 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
         BleScanner.getInstance().addListener(this);
         BleScanner.getInstance().init(this);
         BleScanner.getInstance().startScanning();
+
+        WifiController.getInstance().init(this);
 
 //        BleScanAggregator.getInstance().start();
 //        BleProximityProvider.getInstance().start();

@@ -58,6 +58,10 @@ public class WifiConnection implements Connection, WifiConnectionListener {
         resolveState();
     }
 
+//    public void destroy(){
+//        WifiReceiver.getSharedInstance().removeListener(this);
+//    }
+
     @Override
     public void connect() {
 
@@ -233,7 +237,7 @@ public class WifiConnection implements Connection, WifiConnectionListener {
         // This patch seems to fix the issue.
         // Leaving a todo here to look into the issue a bit more some time down the road
 
-        enableWifi();
+//        enableWifi();
     }
 
     private String getCurrentSsid(Context context) {

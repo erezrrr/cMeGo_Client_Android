@@ -119,4 +119,10 @@ public class WifiReceiver extends BroadcastReceiver {
                 break;
         }
     }
+
+    public void removeListener(WifiConnectionListener listener) {
+        if(mListeners.contains(listener)){
+            mListeners.remove(listener);
+        }
+    }
 }

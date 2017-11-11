@@ -22,16 +22,18 @@ public class WifiConnectionDescriptor extends ConnectionDescriptor {
         return String.format("\"%s\"", mSsid);
     }
 
-    public void setSsid(String ssid) {
+    public WifiConnectionDescriptor setSsid(String ssid) {
         mSsid = ssid;
+        return this;
     }
 
     public String getPassword() {
         return String.format("\"%s\"", mPassword);
     }
 
-    public void setPassword(String password) {
+    public WifiConnectionDescriptor setPassword(String password) {
         mPassword = password;
+        return this;
     }
 
     @Override

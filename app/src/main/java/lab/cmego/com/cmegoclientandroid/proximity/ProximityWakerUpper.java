@@ -14,7 +14,6 @@ import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.activities.MainActivity;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.model.Checkpoint;
-import lab.cmego.com.cmegoclientandroid.model.WifiNetwork;
 import lab.cmego.com.cmegoclientandroid.model.gate.Gate;
 
 /**
@@ -53,25 +52,8 @@ public class ProximityWakerUpper implements ProximityStateMachine.ProximityState
 
         Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
 
-        switch (state){
-            case DEFAULT:
-
-                break;
-            case ONLY_CLOSE:
-
-                connectToNetworkForGate(closestGate);
-
-                break;
-
-            case ONLY_CONNECTED:
-
-                break;
-
-            case CONNECTED_AND_CLOSE:
-
-                onEnteringGate(closestGate);
-
-                break;
+        if(state == ProximityStateMachine.ProximityState.CONNECTED_AND_CLOSE){
+            onEnteringGate(closestGate);
         }
     }
 
@@ -81,11 +63,6 @@ public class ProximityWakerUpper implements ProximityStateMachine.ProximityState
 
     public void setActivityConsumedState(boolean activityConsumedState) {
         mActivityConsumedState = activityConsumedState;
-    }
-
-    private void connectToNetworkForGate(Gate gate) {
-        WifiNetwork wifiNetwork = ContentProvider.getInstance().getWifiNetworkForGate(gate.getId());
-
     }
 
     private void onEnteringGate(Gate closestGate) {
