@@ -5,9 +5,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.bluetooth.le.ScanResult;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import lab.cmego.com.cmegoclientandroid.Persistence;
 import lab.cmego.com.cmegoclientandroid.R;
@@ -32,18 +34,30 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
     public void onCreate() {
         super.onCreate();
 
-        Intent notificationIntent = new Intent(this, InitialActivity.class);
+        Persistence.getSharedInstance().init(this);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MainService.this, "Service Started in " +
+                        (Persistence.getSharedInstance().getStartServiceInForeground() ? "foreground" : "BACKGROUND"), Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        Notification notification = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("CMeGo")
-                .setContentText("")
-                .setContentIntent(pendingIntent).build();
+        if(Persistence.getSharedInstance().getStartServiceInForeground()){
+            Intent notificationIntent = new Intent(this, InitialActivity.class);
 
-//        startForeground(1337, notification);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                    notificationIntent, 0);
+
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle("cMeGo")
+                    .setContentText("BLE Scanning is active")
+                    .setContentIntent(pendingIntent).build();
+
+            startForeground(1337, notification);
+        }
     }
 
     @Override
@@ -61,7 +75,6 @@ public class MainService extends Service implements BleScanner.ScanBleInterface 
 //        BleScanAggregator.getInstance().start();
 //        BleProximityProvider.getInstance().start();
 
-        Persistence.getSharedInstance().init(this);
 
         ScanLogger.getInstance().start();
 
