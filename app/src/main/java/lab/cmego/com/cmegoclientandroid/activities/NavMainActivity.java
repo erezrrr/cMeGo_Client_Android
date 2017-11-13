@@ -16,6 +16,7 @@ import lab.cmego.com.cmegoclientandroid.DataModel;
 import lab.cmego.com.cmegoclientandroid.R;
 import lab.cmego.com.cmegoclientandroid.adapters.DrawerItemCustomAdapter;
 import lab.cmego.com.cmegoclientandroid.fragments.ConnectFragment;
+import lab.cmego.com.cmegoclientandroid.fragments.auth.NewSwipeAuthFragment;
 
 public class NavMainActivity extends AppCompatActivity {
 
@@ -40,7 +41,7 @@ public class NavMainActivity extends AppCompatActivity {
 
         DataModel[] drawerItem = new DataModel[3];
 
-        drawerItem[0] = new DataModel(R.drawable.icon, "Connect");
+        drawerItem[0] = new DataModel(R.drawable.icon, "Open Gate");
         drawerItem[1] = new DataModel(R.drawable.icon, "Fixtures");
         drawerItem[2] = new DataModel(R.drawable.icon, "Table");
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -52,6 +53,7 @@ public class NavMainActivity extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         setupDrawerToggle();
+        selectItem(0);
 
     }
 
@@ -70,10 +72,10 @@ public class NavMainActivity extends AppCompatActivity {
 
         switch (position) {
             case 0:
-                fragment = new ConnectFragment();
+                fragment = new NewSwipeAuthFragment();
                 break;
             case 1:
-//                fragment = new FixturesFragment();
+                fragment = new ConnectFragment();
                 break;
             case 2:
 //                fragment = new TableFragment();
