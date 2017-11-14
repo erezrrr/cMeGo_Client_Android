@@ -43,14 +43,14 @@ public abstract class AuthFragment extends Fragment {
         setupView();
     }
 
-    private void removeFromStack() {
-//        getActivity().getFragmentManager().beginTransaction().remove(this).commit();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
         return inflater.inflate(getMainLayout(), container, false);
+    }
+
+    public void setGateId(String gateId) {
+        mGateId = gateId;
     }
 
     protected void notifyAuthSuccess(AuthenticationResult authenticationResult) {

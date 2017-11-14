@@ -3,14 +3,15 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <lab.cmego.com.cmegoclientandroid.CustomSwitchView
+    <lab.cmego.com.cmegoclientandroid.views.SlideButton
         android:id="@+id/swipeControl"
-        android:layout_width="wrap_content"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:switchMinWidth="200dp"
+        android:clickable="false"
         android:track="@drawable/switch_track_custom"
         android:thumb="@drawable/switch_thumb_custom"
+        android:max="100"
         android:rotation="270"/>
 
 </FrameLayout>

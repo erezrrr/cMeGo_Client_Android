@@ -8,6 +8,7 @@ import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.interfaces.ResultListener;
 import lab.cmego.com.cmegoclientandroid.model.Constants.UserAuthenticationMethod;
 import lab.cmego.com.cmegoclientandroid.network.NetworkClient;
+import lab.cmego.com.cmegoclientandroid.views.SlideButton;
 
 /**
  * Created by Owner on 04/11/2017.
@@ -22,6 +23,15 @@ public class NewSwipeAuthFragment extends AuthFragment {
 
     @Override
     protected void setupView() {
+
+        SlideButton slideButton = (SlideButton) getView().findViewById(R.id.swipeControl);
+
+        slideButton.setSlideButtonListener(new SlideButton.SlideButtonListener() {
+            @Override
+            public void onSlide() {
+                authenticate();
+            }
+        });
 //        Switch switche = (Switch) getView().findViewById(R.id.swipeControl);
 
 //        switche.setswit
