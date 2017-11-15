@@ -54,16 +54,32 @@ public abstract class AuthFragment extends Fragment {
     }
 
     protected void notifyAuthSuccess(AuthenticationResult authenticationResult) {
+
         try {
             ((AuthResultInterface)getActivity()).onSuccess(mGateId, getAuthMethod(), authenticationResult);
+            return;
         } catch(ClassCastException e){
 
         }
+
+        try {
+            ((AuthResultInterface)getParentFragment()).onSuccess(mGateId, getAuthMethod(), authenticationResult);
+        } catch(ClassCastException e){
+
+        }
+
     }
 
     protected void notifyAuthError(Exception e) {
         try {
             ((AuthResultInterface)getActivity()).onError(mGateId, getAuthMethod(), e);
+            return;
+        } catch(ClassCastException e1){
+
+        }
+
+        try {
+            ((AuthResultInterface)getParentFragment()).onError(mGateId, getAuthMethod(), e);
         } catch(ClassCastException e1){
 
         }

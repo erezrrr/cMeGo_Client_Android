@@ -112,7 +112,7 @@ public class InitialActivity extends AppCompatActivity {
         if(mAuth.getCurrentUser() == null){
             startActivity(new Intent(this, SignInSignUpActivity.class));
         } else {
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, NavMainActivity.class));
         }
 
         finish();
