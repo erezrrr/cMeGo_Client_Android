@@ -1,17 +1,21 @@
 package lab.cmego.com.cmegoclientandroid.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.List;
 
 import lab.cmego.com.cmegoclientandroid.R;
+import lab.cmego.com.cmegoclientandroid.adapters.GateSpinnerListAdapter;
 import lab.cmego.com.cmegoclientandroid.authentication.AuthenticationResult;
 import lab.cmego.com.cmegoclientandroid.content.ContentProvider;
 import lab.cmego.com.cmegoclientandroid.fragments.auth.AuthFragment;
@@ -32,6 +36,8 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
 
     private Gate mGate;
     private AuthFragment mCurrentAuthFragment;
+    private Spinner mGatesSpinner;
+    private GateSpinnerListAdapter mGateSpinnerAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +48,47 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.fragment_gate, container, false);
+        return inflater.inflate(R.layout.fragment_gate, container, false);
+    }
 
-        // TODO set from last received here
-        setAuthFragment(UserAuthenticationMethod.SWIPE);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        return view;
+        mGatesSpinner = (Spinner)getView().findViewById(R.id.gatesSpinner);
+        setAdapterWithGates();
+    }
+
+    public void setAdapterWithGates(){
+        List<Gate> i = ContentProvider.getInstance().getGates();
+
+        if(i == null || i.size() == 0){
+            return;
+        }
+
+        mGateSpinnerAdapter = new GateSpinnerListAdapter(getContext(),
+                R.layout.gate_spinner_list_item, R.id.title, i);
+
+        mGatesSpinner.setAdapter(mGateSpinnerAdapter);
+
+        addListenersOnSpinners();
+    }
+
+    private void addListenersOnSpinners() {
+        mGatesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                mGate = mGateSpinnerAdapter.getItem(position);
+                onChoseActiveGate();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
     @Override
@@ -71,7 +112,7 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
 
     @Override
     public void onContentRefreshed() {
-//        setAdapterWithGates();
+        setAdapterWithGates();
     }
 
     @Override
@@ -80,9 +121,10 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
 //        mGateStateConsumed = false;
 
 //        if(ProximityStateMachine.getInstance().getState() == ProximityStateMachine.ProximityState.CONNECTED_AND_CLOSE){
-//            ProximityWakerUpper.getInstance().setActivityConsumedState(true);
-//            Gate closestGate = ProximityStateMachine.getInstance().getClosestGate();
-//            startGateActivity(closestGate);
+////            ProximityWakerUpper.getInstance().setActivityConsumedState(true);
+//            mGate = ProximityStateMachine.getInstance().getClosestGate();
+//            onChoseActiveGate();
+////            startGateActivity(closestGate);
 //        }
         Log.d("condivityAutomatically","conditionalOpen onProximityStateChanged : " + ProximityWakerUpper.getInstance().isActivityConsumedState());
 
@@ -120,6 +162,8 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
             return;
         }
 
+        setActiveGateInSpinners();
+
         NetworkClient.getInstance().initControllerInterface(controller.getBaseUrl());
 
         NetworkClient.getInstance().checkIn(userId, mGate.getId(),  new ResultListener<GateState>() {
@@ -136,6 +180,28 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
             }
         });
 
+    }
+
+    private void setActiveGateInSpinners() {
+
+        int selection = 0;
+
+        if(mGate != null){
+            for(int i = 0; i < mGateSpinnerAdapter.getCount(); i++){
+                if(mGate.getId().equals(mGateSpinnerAdapter.getItem(i).getId())){
+                    selection = i;
+                    break;
+                }
+            }
+        }
+
+        setGateSelectionInSpinner(selection);
+    }
+
+    private void setGateSelectionInSpinner(int position) {
+        mGatesSpinner.setOnItemSelectedListener(null);
+        mGatesSpinner.setSelection(position);
+        addListenersOnSpinners();
     }
 
     private void setAuthFragment(UserAuthenticationMethod method) {
@@ -176,20 +242,11 @@ public class GateFragment extends Fragment implements AuthFragment.AuthResultInt
 
     private void onGotGateState(GateState state) {
         setAuthFragment(state.getNextUserAuthMethod());
-//        NewSwipeAuthFragment placeholder = new NewSwipeAuthFragment();
-//
-//        Bundle bundle = new Bundle();
-////        bundle.putString(AuthFragment.EXTRA_GATE_ID, mGate.getId());
-//        placeholder.setArguments(bundle);
-//
-//        getChildFragmentManager().beginTransaction()
-//                .add(R.id.authContainer, placeholder).commit();
     }
 
     @Override
     public void onSuccess(String gateId, UserAuthenticationMethod method, AuthenticationResult authenticationResult) {
         Toast.makeText(getContext(), "Auth result: " + authenticationResult, Toast.LENGTH_LONG).show();
-//        finish();
     }
 
     @Override

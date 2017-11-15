@@ -20,11 +20,13 @@
         android:orientation="horizontal">
 
         <Spinner
+            android:id="@+id/locationsSpinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"></Spinner>
 
         <Spinner
+            android:id="@+id/gatesSpinner"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.5"></Spinner>
